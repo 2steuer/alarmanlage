@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33530.505
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Alarmanlage", "Alarmanlage\Alarmanlage.csproj", "{144F2F48-8797-4FE3-8962-728CB12605BA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteuerSoft.AlarmSystem", "SteuerSoft.AlarmSystem\SteuerSoft.AlarmSystem.csproj", "{DF526AAB-9608-43FE-A85F-FCC60C40C288}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{144F2F48-8797-4FE3-8962-728CB12605BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{144F2F48-8797-4FE3-8962-728CB12605BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{144F2F48-8797-4FE3-8962-728CB12605BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{144F2F48-8797-4FE3-8962-728CB12605BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF526AAB-9608-43FE-A85F-FCC60C40C288}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF526AAB-9608-43FE-A85F-FCC60C40C288}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF526AAB-9608-43FE-A85F-FCC60C40C288}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF526AAB-9608-43FE-A85F-FCC60C40C288}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {64DD1109-8E10-4AFF-AA20-7BC1609EF535}
+	EndGlobalSection
+EndGlobal
