@@ -1,7 +1,16 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using System.Diagnostics;
+using Microsoft.Extensions.Configuration;
 using SteuerSoft.AlarmSystem;
+using SteuerSoft.AlarmSystem.TelegramBot;
 
+var cfg = new ConfigurationBuilder()
+    .AddJsonFile("config.json")
+    .AddJsonFile("config.overrides.json", optional: true)
+    .Build();
 
-AlarmSystem alarm = new AlarmSystem("Gartenhütte", TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(10));
+var telegram = new AlarmSystemBot(cfg["Telegram:ApiKey"], cfg["Telegram:Password"]);
+telegram.Start();
+
+Console.ReadLine();
