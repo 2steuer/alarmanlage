@@ -1,4 +1,4 @@
-﻿namespace SteuerSoft.AlarmSystem.Sequences.Actions.Base;
+﻿namespace SteuerSoft.AlarmSystem.Core.Sequences.Actions.Base;
 
 public interface ISwitch
 {

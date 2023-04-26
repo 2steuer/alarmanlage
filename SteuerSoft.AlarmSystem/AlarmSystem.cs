@@ -1,8 +1,8 @@
 ﻿using Appccelerate.StateMachine;
 using Appccelerate.StateMachine.AsyncMachine;
+using SteuerSoft.AlarmSystem.Core.Interfaces;
+using SteuerSoft.AlarmSystem.Core.Sequences;
 using SteuerSoft.AlarmSystem.Extensions;
-using SteuerSoft.AlarmSystem.Interfaces;
-using SteuerSoft.AlarmSystem.Sequences;
 
 namespace SteuerSoft.AlarmSystem;
 
@@ -21,6 +21,8 @@ public class AlarmSystem : IAlarmSystemConfigurator
     private List<Sequence> _powerOnSequences = new();
 
     private List<Sequence> _powerOffSequences = new();
+
+    private List<IAlarmTrigger> _triggers = new();
 
     public AlarmSystem(string name, TimeSpan armingDelay, TimeSpan alarmDelay)
     {
@@ -103,6 +105,20 @@ public class AlarmSystem : IAlarmSystemConfigurator
         SetPower(e.PowerState);
     }
 
+    private void TriggerReceived(object? sender, TriggerEventArgs e)
+    {
+        switch (e.Type)
+        {
+            case TriggerType.Alarm:
+                Alarm();
+                break;
+
+            case TriggerType.ImmediateAlarm:
+                ImmediateAlarm();
+                break;
+        }
+    }
+
 
     private Task StartSequences(List<Sequence> sequences)
     {
@@ -152,4 +168,10 @@ public class AlarmSystem : IAlarmSystemConfigurator
         return this;
     }
 
+    public IAlarmSystemConfigurator WithTrigger(IAlarmTrigger trigger)
+    {
+        _triggers.Add(trigger);
+        trigger.Triggered += TriggerReceived;
+        return this;
+    }
 }

@@ -1,6 +1,4 @@
-﻿using SteuerSoft.AlarmSystem.Interfaces;
-
-namespace SteuerSoft.AlarmSystem.Sequences.Actions;
+﻿namespace SteuerSoft.AlarmSystem.Core.Sequences.Actions;
 
 public class DelayAction : ISequenceEntry
 {

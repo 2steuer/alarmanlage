@@ -1,6 +1,6 @@
 ﻿namespace SteuerSoft.AlarmSystem;
 
-enum State
+public enum State
 {
     Off,
     Arming,
@@ -16,6 +16,12 @@ enum Triggers
     PowerOff,
     ArmingDelayElapsed,
     PreAlarmDelayElapsed,
+    Alarm,
+    ImmediateAlarm
+}
+
+public enum TriggerType
+{
     Alarm,
     ImmediateAlarm
 }

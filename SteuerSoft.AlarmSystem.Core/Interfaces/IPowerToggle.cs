@@ -1,4 +1,4 @@
-﻿namespace SteuerSoft.AlarmSystem.Interfaces;
+﻿namespace SteuerSoft.AlarmSystem.Core.Interfaces;
 
 public interface IPowerToggle
 {

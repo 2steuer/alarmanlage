@@ -1,6 +1,4 @@
-﻿using SteuerSoft.AlarmSystem.Interfaces;
-
-namespace SteuerSoft.AlarmSystem.Sequences;
+﻿namespace SteuerSoft.AlarmSystem.Core.Sequences;
 
 public class Sequence
 {

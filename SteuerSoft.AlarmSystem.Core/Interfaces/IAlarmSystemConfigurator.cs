@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SteuerSoft.AlarmSystem.Sequences;
+﻿using SteuerSoft.AlarmSystem.Core.Sequences;
 
-namespace SteuerSoft.AlarmSystem.Interfaces
+namespace SteuerSoft.AlarmSystem.Core.Interfaces
 {
     public interface IAlarmSystemConfigurator
     {
@@ -20,5 +15,7 @@ namespace SteuerSoft.AlarmSystem.Interfaces
         IAlarmSystemConfigurator WithPowerToggle(IPowerToggle toggle);
 
         IAlarmSystemConfigurator WithPowerSwitch(IPowerStateSource powerStateSource);
+
+        IAlarmSystemConfigurator WithTrigger(IAlarmTrigger trigger);
     }
 }
