@@ -1,5 +1,6 @@
 ﻿using Appccelerate.StateMachine;
 using Appccelerate.StateMachine.AsyncMachine;
+using SteuerSoft.AlarmSystem.Core.Enums;
 using SteuerSoft.AlarmSystem.Core.Interfaces;
 using SteuerSoft.AlarmSystem.Core.Sequences;
 using SteuerSoft.AlarmSystem.Extensions;

@@ -1,4 +1,6 @@
-﻿namespace SteuerSoft.AlarmSystem.Core.Sequences;
+﻿using SteuerSoft.AlarmSystem.Core.Interfaces;
+
+namespace SteuerSoft.AlarmSystem.Core.Sequences;
 
 public class Sequence
 {
@@ -27,7 +29,7 @@ public class Sequence
         return this;
     }
 
-    internal Task Start()
+    public Task Start()
     {
         lock (this)
         {
@@ -45,7 +47,7 @@ public class Sequence
         return Task.CompletedTask;
     }
 
-    internal async Task Stop()
+    public async Task Stop()
     {
         lock (this)
         {

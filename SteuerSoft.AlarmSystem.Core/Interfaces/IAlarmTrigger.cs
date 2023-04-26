@@ -1,4 +1,6 @@
-﻿namespace SteuerSoft.AlarmSystem.Core.Interfaces
+﻿using SteuerSoft.AlarmSystem.Core.Enums;
+
+namespace SteuerSoft.AlarmSystem.Core.Interfaces
 {
     public class TriggerEventArgs : EventArgs
     {

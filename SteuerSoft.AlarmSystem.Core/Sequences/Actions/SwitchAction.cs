@@ -1,4 +1,5 @@
-﻿using SteuerSoft.AlarmSystem.Core.Sequences.Actions.Base;
+﻿using SteuerSoft.AlarmSystem.Core.Interfaces;
+using SteuerSoft.AlarmSystem.Core.Sequences.Actions.Base;
 
 namespace SteuerSoft.AlarmSystem.Core.Sequences.Actions;
 
