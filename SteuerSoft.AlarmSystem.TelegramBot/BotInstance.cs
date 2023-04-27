@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Appccelerate.StateMachine;
 using Appccelerate.StateMachine.AsyncMachine;
+using SteuerSoft.AlarmSystem.Core.Enums;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -27,10 +28,15 @@ namespace SteuerSoft.AlarmSystem.TelegramBot
 
         private Message? _currentMenuMessage = null;
 
-        public BotInstance(long chatId, TelegramBotClient bot, Func<string, bool> authorizer)
+        private Action<bool> _powerSetter;
+        private Action<TriggerType> _trigger;
+
+        public BotInstance(long chatId, TelegramBotClient bot, Func<string, bool> authorizer, Action<bool> setPower, Action<TriggerType> trigger)
         {
             ChatId = chatId;
             _bot = bot;
+            _powerSetter = setPower;
+            _trigger = trigger;
 
             var sdb =
                 new StateMachineDefinitionBuilder<BotInstanceState, BotInstanceTrigger>();
@@ -57,6 +63,7 @@ namespace SteuerSoft.AlarmSystem.TelegramBot
                 .On(BotInstanceTrigger.RequestLogin)
                 .Goto(BotInstanceState.UnauthorizedRequestLogin)
                 .Execute(SendUnauthorizedLoginRequest)
+                
                 .On(BotInstanceTrigger.Message)
                 .Goto(BotInstanceState.UnauthorizedIdle);
 
@@ -64,6 +71,7 @@ namespace SteuerSoft.AlarmSystem.TelegramBot
                 .On(BotInstanceTrigger.Message)
                 .If<string>(s => authorizer(s))
                 .Goto(BotInstanceState.AuthorizedMain)
+                
                 .Otherwise()
                 .Goto(BotInstanceState.UnauthorizedIdle)
                 .Execute(SendLoginFailed);
@@ -230,28 +238,29 @@ namespace SteuerSoft.AlarmSystem.TelegramBot
 
         private async Task PowerOn()
         {
-            // TODO: SEND POWER ON
+            _powerSetter?.Invoke(true);
 
             await SendMessage("Schalte Alarmanlage an...");
         }
 
         private async Task PowerOff()
         {
-            // TODO: POWER OFF
+            _powerSetter?.Invoke(false);
 
             await SendMessage("Schalte Alarmanlage aus...");
         }
 
         private async Task Alarm()
         {
-            // TODO: ALARM
+            _trigger?.Invoke(TriggerType.Alarm);
 
             await SendMessage("Löse normalen Alarm aus...");
         }
 
         private async Task ImmediateAlarm()
         {
-            // TODO: IMMEDIATE ALARM
+            _trigger?.Invoke(TriggerType.ImmediateAlarm);
+
             await SendMessage("Löse Sofortalarm aus...");
         }
 

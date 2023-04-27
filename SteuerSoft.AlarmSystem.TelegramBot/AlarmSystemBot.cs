@@ -13,7 +13,7 @@ using Telegram.Bot.Types.Enums;
 
 namespace SteuerSoft.AlarmSystem.TelegramBot
 {
-    public class AlarmSystemBot : IAlarmSystemReporter
+    public class AlarmSystemBot : IAlarmSystemReporter, IPowerStateSource, IAlarmTrigger
     {
         private CancellationTokenSource _cancelTokenSource = new();
 
@@ -90,7 +90,7 @@ namespace SteuerSoft.AlarmSystem.TelegramBot
         {
             if (!_instances.ContainsKey(chatId))
             {
-                var newInstane = new BotInstance(chatId, _bot, CheckPassword);
+                var newInstane = new BotInstance(chatId, _bot, CheckPassword, SetPower, Trigger);
                 await newInstane.Start();
 
                 _instances.Add(chatId, newInstane);
@@ -99,14 +99,75 @@ namespace SteuerSoft.AlarmSystem.TelegramBot
             await _instances[chatId].ProcessUpdate(update);
         }
 
-        public void NewState(string name, State newState)
+        private void SetPower(bool powerState)
         {
-            throw new NotImplementedException();
+            try
+            {
+                PowerStateChanged?.Invoke(this, new PowerStateEventArgs(powerState));
+            }
+            catch (Exception e)
+            {
+                // TODO: log
+            }
         }
 
-        public void NewTrigger(string name, string triggerName, TriggerType type)
+        private void Trigger(TriggerType triggerType)
         {
-            throw new NotImplementedException();
+            try
+            {
+                Triggered?.Invoke(this, new TriggerEventArgs(triggerType));
+            }
+            catch (Exception e)
+            {
+                // TODO: LOG
+            }
         }
+
+        public Task NewState(string name, State newState)
+        {
+            StringBuilder msg = new StringBuilder();
+            
+
+            switch (newState)
+            {
+                case State.Off:
+                    msg.AppendLine("Alarmanlage ausgeschaltet.");
+                    break;
+
+                case State.Idle:
+                    msg.AppendLine("Alarmanlage angeschaltet und bereit.");
+                    break;
+
+                case State.Arming:
+                    msg.AppendLine("Alarmanlage wird bereit...");
+                    break;
+
+                case State.PreAlarm:
+                    msg.AppendLine("*VORALARM AUSGELÖST!*");
+                    break;
+
+                case State.Alarm:
+                    msg.AppendLine("# ALARM!");
+                    msg.AppendLine("*Die Alarmanlage ist ausgelöst worden. Bitte prüfen und ggf. Schritte einleiten!*");
+                    break;
+            }
+
+            return Task.WhenAll(_instances.Select(kvp => kvp.Value.SendMessage(msg.ToString())));
+        }
+
+        public Task NewTrigger(string name, string triggerName, TriggerType type)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"### Auslöser detektiert!");
+            sb.AppendLine($"*Auslöser:* {triggerName}");
+            sb.AppendLine($"*Typ:* {(type == TriggerType.Alarm ? "Normal" : "Sofort")}");
+
+            return Task.WhenAll(_instances.Select(kvp => kvp.Value.SendMessage(sb.ToString())));
+        }
+
+        public event EventHandler<PowerStateEventArgs>? PowerStateChanged;
+        public string Name { get; } = "Telegram Bot";
+
+        public event EventHandler<TriggerEventArgs>? Triggered;
     }
 }

@@ -13,4 +13,13 @@ var cfg = new ConfigurationBuilder()
 var telegram = new AlarmSystemBot(cfg["Telegram:ApiKey"], cfg["Telegram:Password"]);
 telegram.Start();
 
+var sys = new AlarmSystem(cfg["AlarmSystemName"], TimeSpan.FromSeconds(cfg.GetValue<int>("PreArmDelay")),
+    TimeSpan.FromSeconds(cfg.GetValue<int>("AlarmDelay")));
+sys.WithTelegram(telegram);
+
+sys.Start();
+
 Console.ReadLine();
+
+sys.Stop();
+telegram.Stop();

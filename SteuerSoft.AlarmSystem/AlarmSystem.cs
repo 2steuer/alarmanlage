@@ -4,6 +4,7 @@ using SteuerSoft.AlarmSystem.Core.Enums;
 using SteuerSoft.AlarmSystem.Core.Interfaces;
 using SteuerSoft.AlarmSystem.Core.Sequences;
 using SteuerSoft.AlarmSystem.Extensions;
+using SteuerSoft.AlarmSystem.StatemachineExtensions;
 
 namespace SteuerSoft.AlarmSystem;
 
@@ -25,8 +26,13 @@ public class AlarmSystem : IAlarmSystemConfigurator
 
     private List<IAlarmTrigger> _triggers = new();
 
+    private AlarmSystemReportExtension _reporter;
+
+    private string _name;
+
     public AlarmSystem(string name, TimeSpan armingDelay, TimeSpan alarmDelay)
     {
+        _name = name;
         var b = new StateMachineDefinitionBuilder<State, Triggers>();
 
         b.WithInitialState(State.Off);
@@ -82,6 +88,9 @@ public class AlarmSystem : IAlarmSystemConfigurator
         var d = b.Build();
 
         _stateMachine = d.CreateActiveStateMachine(name);
+
+        _reporter = new AlarmSystemReportExtension(name);
+        _stateMachine.AddExtension(_reporter);
     }
 
     public Task Start() => _stateMachine.Start();
@@ -106,8 +115,13 @@ public class AlarmSystem : IAlarmSystemConfigurator
         SetPower(e.PowerState);
     }
 
-    private void TriggerReceived(object? sender, TriggerEventArgs e)
+    private async void TriggerReceived(object? sender, TriggerEventArgs e)
     {
+        if (sender is IAlarmTrigger trig)
+        {
+            await _reporter.ReportTrigger(_name, trig.Name, e.Type);
+        }
+
         switch (e.Type)
         {
             case TriggerType.Alarm:
@@ -173,6 +187,12 @@ public class AlarmSystem : IAlarmSystemConfigurator
     {
         _triggers.Add(trigger);
         trigger.Triggered += TriggerReceived;
+        return this;
+    }
+
+    public IAlarmSystemConfigurator WithReporter(IAlarmSystemReporter reporter)
+    {
+        _reporter.Reporters.Add(reporter);
         return this;
     }
 }

@@ -2,5 +2,8 @@
   "Telegram": {
     "ApiKey": "PLACE IT HERE",
     "Password": "VerySecret"
-  }
+  },
+  "AlarmSystemName": "Test",
+  "PreArmDelay": 10,
+  "AlarmDelay": 10
 }

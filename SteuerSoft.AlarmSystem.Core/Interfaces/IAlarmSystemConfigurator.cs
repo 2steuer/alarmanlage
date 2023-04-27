@@ -17,5 +17,7 @@ namespace SteuerSoft.AlarmSystem.Core.Interfaces
         IAlarmSystemConfigurator WithPowerSwitch(IPowerStateSource powerStateSource);
 
         IAlarmSystemConfigurator WithTrigger(IAlarmTrigger trigger);
+
+        IAlarmSystemConfigurator WithReporter(IAlarmSystemReporter reporter);
     }
 }
