@@ -10,16 +10,16 @@ var cfg = new ConfigurationBuilder()
     .AddJsonFile("config.overrides.json", optional: true)
     .Build();
 
-var telegram = new AlarmSystemBot(cfg["Telegram:ApiKey"], cfg["Telegram:Password"]);
-telegram.Start();
+var telegram = new AlarmSystemBot(cfg["Telegram:ApiKey"], cfg["Telegram:Password"], cfg["Telegram:PersistenceStorage"]);
+await telegram.Start();
 
 var sys = new AlarmSystem(cfg["AlarmSystemName"], TimeSpan.FromSeconds(cfg.GetValue<int>("PreArmDelay")),
     TimeSpan.FromSeconds(cfg.GetValue<int>("AlarmDelay")));
 sys.WithTelegram(telegram);
 
-sys.Start();
+await sys.Start();
 
 Console.ReadLine();
 
-sys.Stop();
-telegram.Stop();
+await sys.Stop();
+await telegram.Stop();

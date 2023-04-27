@@ -1,7 +1,8 @@
 {
   "Telegram": {
     "ApiKey": "PLACE IT HERE",
-    "Password": "VerySecret"
+    "Password": "VerySecret",
+    "PersistenceStorage": "telegram_chats"
   },
   "AlarmSystemName": "Test",
   "PreArmDelay": 10,

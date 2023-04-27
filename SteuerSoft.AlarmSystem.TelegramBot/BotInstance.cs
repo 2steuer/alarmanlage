@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Appccelerate.StateMachine;
 using Appccelerate.StateMachine.AsyncMachine;
 using SteuerSoft.AlarmSystem.Core.Enums;
+using SteuerSoft.AlarmSystem.TelegramBot.Persistence;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -31,14 +32,18 @@ internal class BotInstance
     private Action<bool> _powerSetter;
     private Action<TriggerType> _trigger;
 
-    public BotInstance(long chatId, TelegramBotClient bot, Func<string, bool> authorizer, Action<bool> setPower, Action<TriggerType> trigger)
+    private TelegramBotPersistence _persistence;
+
+    public BotInstance(long chatId, TelegramBotClient bot, Func<string, bool> authorizer, Action<bool> setPower, Action<TriggerType> trigger, string persistencePath)
     {
         ChatId = chatId;
         _bot = bot;
         _powerSetter = setPower;
         _trigger = trigger;
 
-        var sdb =
+        _persistence = new TelegramBotPersistence(persistencePath, chatId);
+
+            var sdb =
             new StateMachineDefinitionBuilder<BotInstanceState, BotInstanceTrigger>();
 
         sdb.WithInitialState(BotInstanceState.Unauthorized);
@@ -125,16 +130,20 @@ internal class BotInstance
         var sd = sdb.Build();
 
         _stateMachine = sd.CreatePassiveStateMachine();
+
+        
     }
 
     public async Task Start()
     {
+        await _stateMachine.Load(_persistence);
         await _stateMachine.Start();
     }
 
     public async Task Stop()
     {
         await _stateMachine.Stop();
+        await _stateMachine.Save(_persistence);
     }
 
     private async Task ClearKeyboard()

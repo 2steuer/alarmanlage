@@ -23,10 +23,13 @@ public class AlarmSystemBot : IAlarmSystemReporter, IPowerStateSource, IAlarmTri
 
     private Dictionary<long, BotInstance> _instances = new();
 
-    public AlarmSystemBot(string apiToken, string password)
+    private string _persistencePath;
+
+    public AlarmSystemBot(string apiToken, string password, string persistencePath)
     {
         _bot = new TelegramBotClient(apiToken);
         _password = password;
+        _persistencePath = persistencePath;
     }
 
     private bool CheckPassword(string pw)
@@ -34,7 +37,7 @@ public class AlarmSystemBot : IAlarmSystemReporter, IPowerStateSource, IAlarmTri
         return pw.Equals(_password);
     }
 
-    public void Start()
+    public async Task Start()
     {
         lock (this)
         {
@@ -47,10 +50,29 @@ public class AlarmSystemBot : IAlarmSystemReporter, IPowerStateSource, IAlarmTri
             _cancelTokenSource = new CancellationTokenSource();
         }
 
+        if (!Directory.Exists(_persistencePath))
+        {
+            Directory.CreateDirectory(_persistencePath);
+        }
+
+        foreach (string file in Directory.GetFiles(_persistencePath, "*.json"))
+        {
+            var num = Path.GetFileNameWithoutExtension(file);
+
+            if (long.TryParse(num, out long chatId))
+            {
+                var newInstance = new BotInstance(chatId, _bot, CheckPassword, SetPower, Trigger, _persistencePath);
+                
+                await newInstance.Start();
+
+                _instances.Add(chatId, newInstance);
+            }
+        }
+
         _bot.StartReceiving(new DefaultUpdateHandler(HandleUpdate, PollingErrorHandler), cancellationToken:_cancelTokenSource.Token);
     }
 
-    public void Stop()
+    public async Task Stop()
     {
         lock (this)
         {
@@ -61,13 +83,20 @@ public class AlarmSystemBot : IAlarmSystemReporter, IPowerStateSource, IAlarmTri
 
             _cancelTokenSource.Cancel();
             Running = false;
+
         }
 
-            
+        foreach (var botInstance in _instances)
+        {
+            await botInstance.Value.Stop();
+        }
+
+        _instances.Clear();
     }
 
     private Task PollingErrorHandler(ITelegramBotClient arg1, Exception arg2, CancellationToken arg3)
     {
+        // TODO: LOGGING
         Debugger.Break();
         return Task.CompletedTask;
     }
@@ -90,7 +119,7 @@ public class AlarmSystemBot : IAlarmSystemReporter, IPowerStateSource, IAlarmTri
     {
         if (!_instances.ContainsKey(chatId))
         {
-            var newInstane = new BotInstance(chatId, _bot, CheckPassword, SetPower, Trigger);
+            var newInstane = new BotInstance(chatId, _bot, CheckPassword, SetPower, Trigger, _persistencePath);
             await newInstane.Start();
 
             _instances.Add(chatId, newInstane);
