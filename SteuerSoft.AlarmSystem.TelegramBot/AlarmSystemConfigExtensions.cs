@@ -5,15 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using SteuerSoft.AlarmSystem.Core.Interfaces;
 
-namespace SteuerSoft.AlarmSystem.TelegramBot
+namespace SteuerSoft.AlarmSystem.TelegramBot;
+
+public static class AlarmSystemConfigExtensions
 {
-    public static class AlarmSystemConfigExtensions
+    public static IAlarmSystemConfigurator WithTelegram(this IAlarmSystemConfigurator cfg, AlarmSystemBot bot)
     {
-        public static IAlarmSystemConfigurator WithTelegram(this IAlarmSystemConfigurator cfg, AlarmSystemBot bot)
-        {
-            return cfg.WithPowerSwitch(bot)
-                .WithTrigger(bot)
-                .WithReporter(bot);
-        }
+        return cfg.WithPowerSwitch(bot)
+            .WithTrigger(bot)
+            .WithReporter(bot);
     }
 }

@@ -9,41 +9,40 @@ using Appccelerate.StateMachine.AsyncMachine.States;
 using SteuerSoft.AlarmSystem.Core.Enums;
 using SteuerSoft.AlarmSystem.Core.Interfaces;
 
-namespace SteuerSoft.AlarmSystem.StatemachineExtensions
+namespace SteuerSoft.AlarmSystem.StatemachineExtensions;
+
+internal class AlarmSystemReportExtension : AsyncExtensionBase<State, Triggers>
 {
-    internal class AlarmSystemReportExtension : AsyncExtensionBase<State, Triggers>
+    public List<IAlarmSystemReporter> Reporters { get; } = new();
+
+    private string _machineName;
+
+    public AlarmSystemReportExtension(string name)
     {
-        public List<IAlarmSystemReporter> Reporters { get; } = new();
+        _machineName = name;
+    }
 
-        private string _machineName;
-
-        public AlarmSystemReportExtension(string name)
+    public override async Task SwitchedState(IStateMachineInformation<State, Triggers> stateMachine, IStateDefinition<State, Triggers> oldState, IStateDefinition<State, Triggers> newState)
+    {
+        try
         {
-            _machineName = name;
+            await Task.WhenAll(Reporters.Select(r => r.NewState(_machineName, newState.Id)));
         }
-
-        public override async Task SwitchedState(IStateMachineInformation<State, Triggers> stateMachine, IStateDefinition<State, Triggers> oldState, IStateDefinition<State, Triggers> newState)
+        catch (Exception e)
         {
-            try
-            {
-                await Task.WhenAll(Reporters.Select(r => r.NewState(_machineName, newState.Id)));
-            }
-            catch (Exception e)
-            {
-                // TODO: LOG
-            }
+            // TODO: LOG
         }
+    }
 
-        public async Task ReportTrigger(string machineName, string triggerName, TriggerType type)
+    public async Task ReportTrigger(string machineName, string triggerName, TriggerType type)
+    {
+        try
         {
-            try
-            {
-                await Task.WhenAll(Reporters.Select(r => r.NewTrigger(machineName, triggerName, type)));
-            }
-            catch (Exception e)
-            {
-                // TODO: LOG
-            }
+            await Task.WhenAll(Reporters.Select(r => r.NewTrigger(machineName, triggerName, type)));
+        }
+        catch (Exception e)
+        {
+            // TODO: LOG
         }
     }
 }

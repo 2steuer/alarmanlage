@@ -4,18 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SteuerSoft.AlarmSystem.TelegramBot
+namespace SteuerSoft.AlarmSystem.TelegramBot;
+
+internal enum BotInstanceState
 {
-    internal enum BotInstanceState
-    {
-        Unauthorized,
-        UnauthorizedIdle,
-        UnauthorizedRequestLogin,
+    Unauthorized,
+    UnauthorizedIdle,
+    UnauthorizedRequestLogin,
 
-        Authorized,
-        AuthorizedMain,
-        AuthorizedPower,
-        AuthorizedAlarm
+    Authorized,
+    AuthorizedMain,
+    AuthorizedPower,
+    AuthorizedAlarm
 
-    }
 }

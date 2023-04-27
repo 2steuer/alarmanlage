@@ -1,21 +1,20 @@
 ﻿using SteuerSoft.AlarmSystem.Core.Enums;
 
-namespace SteuerSoft.AlarmSystem.Core.Interfaces
+namespace SteuerSoft.AlarmSystem.Core.Interfaces;
+
+public class TriggerEventArgs : EventArgs
 {
-    public class TriggerEventArgs : EventArgs
+    public TriggerType Type { get; }
+
+    public TriggerEventArgs(TriggerType type)
     {
-        public TriggerType Type { get; }
-
-        public TriggerEventArgs(TriggerType type)
-        {
-            Type = type;
-        }
+        Type = type;
     }
+}
 
-    public interface IAlarmTrigger
-    {
-        string Name { get; }
+public interface IAlarmTrigger
+{
+    string Name { get; }
 
-        event EventHandler<TriggerEventArgs> Triggered;
-    }
+    event EventHandler<TriggerEventArgs> Triggered;
 }
