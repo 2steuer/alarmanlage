@@ -6,15 +6,16 @@ public class TriggerEventArgs : EventArgs
 {
     public TriggerType Type { get; }
 
-    public TriggerEventArgs(TriggerType type)
+    public string TriggerName { get; }
+
+    public TriggerEventArgs(TriggerType type, string triggerName)
     {
         Type = type;
+        TriggerName = triggerName;
     }
 }
 
 public interface IAlarmTrigger
 {
-    string Name { get; }
-
     event EventHandler<TriggerEventArgs> Triggered;
 }

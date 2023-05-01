@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Appccelerate.StateMachine;
 using Appccelerate.StateMachine.AsyncMachine;
 using SteuerSoft.AlarmSystem.Core.Enums;
+using SteuerSoft.AlarmSystem.Core.Tools;
+using SteuerSoft.AlarmSystem.TelegramBot.Helpers;
 using SteuerSoft.AlarmSystem.TelegramBot.Persistence;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -30,11 +32,13 @@ internal class BotInstance
     private Message? _currentMenuMessage = null;
 
     private Action<bool> _powerSetter;
-    private Action<TriggerType> _trigger;
+    private Action<TriggerType, string> _trigger;
 
     private TelegramBotPersistence _persistence;
 
-    public BotInstance(long chatId, TelegramBotClient bot, Func<string, bool> authorizer, Action<bool> setPower, Action<TriggerType> trigger, string persistencePath)
+    private string _userName = string.Empty;
+
+    public BotInstance(long chatId, TelegramBotClient bot, Func<string, bool> authorizer, Action<bool> setPower, Action<TriggerType, string> trigger, string persistencePath)
     {
         ChatId = chatId;
         _bot = bot;
@@ -130,7 +134,7 @@ internal class BotInstance
         var sd = sdb.Build();
 
         _stateMachine = sd.CreatePassiveStateMachine();
-
+        _stateMachine.AddExtension(new StateMachineLoggingExtension<BotInstanceState,BotInstanceTrigger>($"TelegramBot:{ChatId}"));
         
     }
 
@@ -138,6 +142,16 @@ internal class BotInstance
     {
         await _stateMachine.Load(_persistence);
         await _stateMachine.Start();
+
+        var chat = await _bot.GetChatAsync(ChatId);
+
+        var userName = chat.Username;
+        var firstName = chat.FirstName;
+        var lastName = chat.LastName;
+
+        var nameParts = new string[] { firstName, lastName, userName }.Where(s => !string.IsNullOrEmpty(s));
+
+        _userName = string.Join(" ", nameParts);
     }
 
     public async Task Stop()
@@ -261,16 +275,16 @@ internal class BotInstance
 
     private async Task Alarm()
     {
-        _trigger?.Invoke(TriggerType.Alarm);
-
         await SendMessage("Löse normalen Alarm aus...");
+
+        _trigger?.Invoke(TriggerType.Alarm, _userName);
     }
 
     private async Task ImmediateAlarm()
     {
-        _trigger?.Invoke(TriggerType.ImmediateAlarm);
-
         await SendMessage("Löse Sofortalarm aus...");
+
+        _trigger?.Invoke(TriggerType.ImmediateAlarm, _userName);
     }
 
     public async Task ProcessUpdate(Update update)

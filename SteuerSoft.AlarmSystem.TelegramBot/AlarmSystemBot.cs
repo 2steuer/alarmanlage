@@ -140,11 +140,20 @@ public class AlarmSystemBot : IAlarmSystemReporter, IPowerStateSource, IAlarmTri
         }
     }
 
-    private void Trigger(TriggerType triggerType)
+    private void Trigger(TriggerType triggerType, string triggerName)
     {
         try
         {
-            Triggered?.Invoke(this, new TriggerEventArgs(triggerType));
+            StringBuilder nameBuilder = new StringBuilder();
+            nameBuilder.Append("Telegram");
+
+            if (!string.IsNullOrEmpty(triggerName))
+            {
+                nameBuilder.Append(": ");
+                nameBuilder.Append(triggerName);
+            }
+
+            Triggered?.Invoke(this, new TriggerEventArgs(triggerType, nameBuilder.ToString()));
         }
         catch (Exception e)
         {

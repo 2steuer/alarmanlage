@@ -1,8 +1,10 @@
 ﻿using Appccelerate.StateMachine;
 using Appccelerate.StateMachine.AsyncMachine;
+using NLog;
 using SteuerSoft.AlarmSystem.Core.Enums;
 using SteuerSoft.AlarmSystem.Core.Interfaces;
 using SteuerSoft.AlarmSystem.Core.Sequences;
+using SteuerSoft.AlarmSystem.Core.Tools;
 using SteuerSoft.AlarmSystem.Extensions;
 using SteuerSoft.AlarmSystem.StatemachineExtensions;
 
@@ -10,6 +12,8 @@ namespace SteuerSoft.AlarmSystem;
 
 public class AlarmSystem : IAlarmSystemConfigurator
 {
+    private ILogger _log;
+
     private IAsyncStateMachine<State, Triggers> _stateMachine;
 
     private List<IPowerToggle> _powerToggles = new();
@@ -32,6 +36,8 @@ public class AlarmSystem : IAlarmSystemConfigurator
 
     public AlarmSystem(string name, TimeSpan armingDelay, TimeSpan alarmDelay)
     {
+        _log = LogManager.GetLogger(name, typeof(AlarmSystem));
+
         _name = name;
         var b = new StateMachineDefinitionBuilder<State, Triggers>();
 
@@ -91,6 +97,7 @@ public class AlarmSystem : IAlarmSystemConfigurator
 
         _reporter = new AlarmSystemReportExtension(name);
         _stateMachine.AddExtension(_reporter);
+        _stateMachine.AddExtension(new StateMachineLoggingExtension<State,Triggers>($"AlarmSys:{name}"));
     }
 
     public Task Start() => _stateMachine.Start();
@@ -119,17 +126,17 @@ public class AlarmSystem : IAlarmSystemConfigurator
     {
         if (sender is IAlarmTrigger trig)
         {
-            await _reporter.ReportTrigger(_name, trig.Name, e.Type);
+            await _reporter.ReportTrigger(_name, e.TriggerName, e.Type);
         }
 
         switch (e.Type)
         {
             case TriggerType.Alarm:
-                Alarm();
+                await Alarm();
                 break;
 
             case TriggerType.ImmediateAlarm:
-                ImmediateAlarm();
+                await ImmediateAlarm();
                 break;
         }
     }
