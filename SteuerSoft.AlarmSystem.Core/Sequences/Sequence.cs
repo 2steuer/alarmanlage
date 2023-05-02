@@ -80,9 +80,9 @@ public class Sequence
                 }
             } while (Repeat && !_cancelTokenSource.Token.IsCancellationRequested);
         }
-        catch (Exception e)
+        catch (Exception)
         {
-            // log message
+            // TODO: log message
 
         }
         finally

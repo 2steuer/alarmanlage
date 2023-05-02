@@ -7,9 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Alarmanlage", "Alarmanlage\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SteuerSoft.AlarmSystem", "SteuerSoft.AlarmSystem\SteuerSoft.AlarmSystem.csproj", "{DF526AAB-9608-43FE-A85F-FCC60C40C288}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteuerSoft.AlarmSystem.TelegramBot", "SteuerSoft.AlarmSystem.TelegramBot\SteuerSoft.AlarmSystem.TelegramBot.csproj", "{F63E36EC-078A-4042-A355-E0C79A4C2FD6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SteuerSoft.AlarmSystem.TelegramBot", "SteuerSoft.AlarmSystem.TelegramBot\SteuerSoft.AlarmSystem.TelegramBot.csproj", "{F63E36EC-078A-4042-A355-E0C79A4C2FD6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteuerSoft.AlarmSystem.Core", "SteuerSoft.AlarmSystem.Core\SteuerSoft.AlarmSystem.Core.csproj", "{7B7A9F07-694E-454E-BBA3-92AB4BC6F5B1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SteuerSoft.AlarmSystem.Core", "SteuerSoft.AlarmSystem.Core\SteuerSoft.AlarmSystem.Core.csproj", "{7B7A9F07-694E-454E-BBA3-92AB4BC6F5B1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteuerSoft.AlarmSystem.Mqtt", "SteuerSoft.AlarmSystem.Mqtt\SteuerSoft.AlarmSystem.Mqtt.csproj", "{4D02C737-3C89-491F-AD01-6D0D561F7A6D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{7B7A9F07-694E-454E-BBA3-92AB4BC6F5B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7B7A9F07-694E-454E-BBA3-92AB4BC6F5B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7B7A9F07-694E-454E-BBA3-92AB4BC6F5B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D02C737-3C89-491F-AD01-6D0D561F7A6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D02C737-3C89-491F-AD01-6D0D561F7A6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D02C737-3C89-491F-AD01-6D0D561F7A6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D02C737-3C89-491F-AD01-6D0D561F7A6D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

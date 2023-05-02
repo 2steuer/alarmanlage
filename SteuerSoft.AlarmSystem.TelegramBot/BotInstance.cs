@@ -170,7 +170,7 @@ internal class BotInstance
         }
     }
 
-    private async Task SendMenu(string message, InlineKeyboardMarkup inlineKeyboard = null)
+    private async Task SendMenu(string message, InlineKeyboardMarkup? inlineKeyboard = null)
     {
         _currentMenuMessage = await _bot.SendTextMessageAsync(chatId: ChatId,
             text: message,

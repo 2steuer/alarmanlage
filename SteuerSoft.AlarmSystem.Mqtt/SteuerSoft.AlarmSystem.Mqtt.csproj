@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MQTTnet.Extensions.ManagedClient" Version="4.2.0.706" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SteuerSoft.AlarmSystem.Core\SteuerSoft.AlarmSystem.Core.csproj" />
+  </ItemGroup>
+
+</Project>
