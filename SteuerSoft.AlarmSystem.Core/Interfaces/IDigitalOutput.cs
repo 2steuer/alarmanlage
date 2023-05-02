@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace SteuerSoft.AlarmSystem.Core.Interfaces
 {
-    internal interface IDigitalOutput
+    public interface IDigitalOutput
     {
         string Name { get; }
-        Task Set(bool on);
+        Task Set(bool on, CancellationToken ctx = default);
     }
 }

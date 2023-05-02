@@ -1,14 +1,13 @@
 ﻿using SteuerSoft.AlarmSystem.Core.Interfaces;
-using SteuerSoft.AlarmSystem.Core.Sequences.Actions.Base;
 
 namespace SteuerSoft.AlarmSystem.Core.Sequences.Actions;
 
 public class SwitchAction : ISequenceEntry
 {
-    private ISwitch _switch;
+    private IDigitalOutput _switch;
     private bool _desiredState;
 
-    public SwitchAction(ISwitch @switch, bool desiredState)
+    public SwitchAction(IDigitalOutput @switch, bool desiredState)
     {
         _switch = @switch;
         _desiredState = desiredState;
@@ -16,6 +15,6 @@ public class SwitchAction : ISequenceEntry
 
     public Task Execute(CancellationToken ctx)
     {
-        return _switch.Switch(_desiredState, ctx);
+        return _switch.Set(_desiredState, ctx);
     }
 }
