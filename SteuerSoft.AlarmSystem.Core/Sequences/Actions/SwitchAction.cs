@@ -17,4 +17,9 @@ public class SwitchAction : ISequenceEntry
     {
         return _switch.Set(_desiredState, ctx);
     }
+
+    public Task Reset(CancellationToken ctx)
+    {
+        return _switch.SetDefault(ctx);
+    }
 }

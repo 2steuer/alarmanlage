@@ -15,4 +15,9 @@ public class DelayAction : ISequenceEntry
     {
         return Task.Delay(_delay, ctx);
     }
+
+    public Task Reset(CancellationToken ctx)
+    {
+        return Task.CompletedTask;
+    }
 }

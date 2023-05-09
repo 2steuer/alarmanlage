@@ -10,5 +10,7 @@ namespace SteuerSoft.AlarmSystem.Core.Interfaces
     {
         string Name { get; }
         Task Set(bool on, CancellationToken ctx = default);
+
+        Task SetDefault(CancellationToken ctx = default);
     }
 }

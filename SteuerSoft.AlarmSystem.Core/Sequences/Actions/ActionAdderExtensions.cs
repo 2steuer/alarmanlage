@@ -1,4 +1,4 @@
-﻿using SteuerSoft.AlarmSystem.Core.Sequences.Actions.Base;
+﻿using SteuerSoft.AlarmSystem.Core.Interfaces;
 
 namespace SteuerSoft.AlarmSystem.Core.Sequences.Actions;
 
@@ -9,12 +9,12 @@ public static class ActionAdderExtensions
         return seq.Add(new DelayAction(delay));
     }
 
-    public static Sequence Switch(this Sequence seq, ISwitch actuator, bool desiredState)
+    public static Sequence Switch(this Sequence seq, IDigitalOutput actuator, bool desiredState)
     {
         return seq.Add(new SwitchAction(actuator, desiredState));
     }
 
-    public static Sequence SwitchOnFor(this Sequence seq, ISwitch actuator, TimeSpan onTime)
+    public static Sequence SwitchOnFor(this Sequence seq, IDigitalOutput actuator, TimeSpan onTime)
     {
         return seq.Switch(actuator, true)
             .Delay(onTime)

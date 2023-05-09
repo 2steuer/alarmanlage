@@ -3,4 +3,6 @@
 public interface ISequenceEntry
 {
     Task Execute(CancellationToken ctx);
+
+    Task Reset(CancellationToken ctx);
 }

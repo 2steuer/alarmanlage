@@ -65,6 +65,9 @@ public class Sequence
         _cancelTokenSource.Cancel();
 
         await _runnerCompletionSource.Task;
+
+        // TODO: Handle cancellation and error logging!
+        await Task.WhenAll(_entries.Select(e => e.Reset(CancellationToken.None)));
     }
 
     private async void RunnerThread(object? state)
@@ -79,6 +82,10 @@ public class Sequence
                     await entry.Execute(_cancelTokenSource.Token);
                 }
             } while (Repeat && !_cancelTokenSource.Token.IsCancellationRequested);
+        }
+        catch (TaskCanceledException)
+        {
+            // TODO: Log
         }
         catch (Exception)
         {
