@@ -102,7 +102,10 @@ internal class BotInstance
             .On(BotInstanceTrigger.UnMute)
             .If(() => _muted)
             .Goto(BotInstanceState.AuthorizedMain)
-            .Execute(Unmute);
+            .Execute(Unmute)
+            
+            .On(BotInstanceTrigger.Message)
+            .Goto(BotInstanceState.AuthorizedMain);
 
         sdb.In(BotInstanceState.AuthorizedAlarm)
             .ExecuteOnEntry(SendAlarmMenu)
@@ -115,7 +118,10 @@ internal class BotInstance
             .Execute(ImmediateAlarm)
                 
             .On(BotInstanceTrigger.GoBack)
-            .Goto(BotInstanceState.AuthorizedMain);
+            .Goto(BotInstanceState.AuthorizedMain)
+
+            .On(BotInstanceTrigger.Message)
+            .Goto(BotInstanceState.AuthorizedAlarm);
 
         sdb.In(BotInstanceState.AuthorizedPower)
             .ExecuteOnEntry(SendPowerMenu)
@@ -128,7 +134,10 @@ internal class BotInstance
             .Execute(PowerOff)
 
             .On(BotInstanceTrigger.GoBack)
-            .Goto(BotInstanceState.AuthorizedMain);
+            .Goto(BotInstanceState.AuthorizedMain)
+
+            .On(BotInstanceTrigger.Message)
+            .Goto(BotInstanceState.AuthorizedPower); ;
 
 
         var sd = sdb.Build();

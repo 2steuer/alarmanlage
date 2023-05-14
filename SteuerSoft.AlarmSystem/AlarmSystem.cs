@@ -46,8 +46,10 @@ public class AlarmSystem : IAlarmSystemConfigurator
         b.In(State.Off)
             .ExecuteOnEntry(() => StartSequences(_powerOffSequences))
             .ExecuteOnExit(() => StopSequences(_powerOffSequences))
+            
             .On(Triggers.TogglePower)
             .Goto(State.Arming)
+            
             .On(Triggers.PowerOn)
             .Goto(State.Arming);
 
