@@ -15,5 +15,12 @@ namespace SteuerSoft.AlarmSystem.Mqtt
         {
             return new MqttDigitalOutput(conn, name, publishTopic, onPayload, offPayload, invert, defaultState);
         }
+
+        public static IDigitalInput CreateDigitalInput(this MqttConnector conn, string name, string topic, string onPayload="ON", string offPayload="OFF", bool invert = false)
+        {
+            var digin = new MqttDigitalInput(name, topic, offPayload, onPayload, invert);
+            conn.AddSubscriber(digin).Wait();
+            return digin;
+        }
     }
 }

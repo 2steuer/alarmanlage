@@ -18,5 +18,14 @@ namespace SteuerSoft.AlarmSystem
 
             return configurator;
         }
+
+        public static IAlarmSystemConfigurator WithPowerSwitch(this IAlarmSystemConfigurator configurator,
+            string name,
+            IDigitalInput input,
+            bool onState = true)
+        {
+            var ps = new DigitalInputPowerStateSource(name, input, onState);
+            return configurator.WithPowerSwitch(ps);
+        }
     }
 }

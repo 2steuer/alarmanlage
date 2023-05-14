@@ -15,7 +15,7 @@ namespace SteuerSoft.AlarmSystem.Mqtt
     {
         public static IAlarmSystemConfigurator WithMqttTrigger(this IAlarmSystemConfigurator configurator, MqttConnector connector, string name, TriggerType type, string topic, string offTopic = "OFF", string onTopic = "ON", bool triggerState = true)
         {
-            var sub = new MqttDigitalInput(name, type, topic, offTopic, onTopic, false);
+            var sub = new MqttDigitalInput(name, topic, offTopic, onTopic, false);
 
             connector.AddSubscriber(sub).Wait();
 

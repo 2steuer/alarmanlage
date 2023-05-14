@@ -21,7 +21,7 @@ namespace SteuerSoft.AlarmSystem.Mqtt.Triggers
 
         private bool _invert; 
 
-        public MqttDigitalInput(string name, TriggerType type, string mqttfilter, string offPayload, string onPayload, bool invert)
+        internal MqttDigitalInput(string name, string mqttfilter, string offPayload, string onPayload, bool invert)
         {
             _name = name;
             Filter = mqttfilter;
