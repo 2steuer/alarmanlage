@@ -51,7 +51,15 @@ sys.WithAlarmSequence(alarmSequence);
 
 await sys.Start();
 
-Console.ReadLine();
+TaskCompletionSource cancelSource = new TaskCompletionSource();
+
+Console.CancelKeyPress += (sender, eventArgs) =>
+{
+    eventArgs.Cancel = true;
+    cancelSource.TrySetResult();
+};
+
+await cancelSource.Task;
 
 await sys.Stop();
 await telegram.Stop();
