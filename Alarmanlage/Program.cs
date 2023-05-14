@@ -107,10 +107,27 @@ log.Info("System running!");
 
 TaskCompletionSource cancelSource = new TaskCompletionSource();
 
+bool haveSigInt = false;
+
 Console.CancelKeyPress += (sender, eventArgs) =>
 {
+    log.Debug("Processing SIGINT");
     eventArgs.Cancel = true;
+    haveSigInt = true;
     cancelSource.TrySetResult();
+};
+
+AppDomain.CurrentDomain.ProcessExit += (sender, eventArgs) =>
+{
+    if (!haveSigInt)
+    {
+        log.Debug("Processing SIGTERM");
+        cancelSource.TrySetResult();
+    }
+    else
+    {
+        log.Debug($"Got SIGTERM but ignoring it because of SIGINT before");
+    }
 };
 
 await cancelSource.Task;
