@@ -3,6 +3,7 @@
 using System.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using MQTTnet.Diagnostics;
+using NLog;
 using SteuerSoft.AlarmSystem;
 using SteuerSoft.AlarmSystem.Core.Sequences;
 using SteuerSoft.AlarmSystem.Core.Sequences.Actions;
@@ -10,8 +11,16 @@ using SteuerSoft.AlarmSystem.Mqtt;
 using SteuerSoft.AlarmSystem.Mqtt.Connector;
 using SteuerSoft.AlarmSystem.TelegramBot;
 
+var log = LogManager.GetCurrentClassLogger();
+
+AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) =>
+{
+    log.Fatal(eventArgs.ExceptionObject as Exception, $"Unhandled exception in program!");
+};
+
 var cfgb = new ConfigurationBuilder();
     
+
 
 if (args.Length <= 0)
 {
@@ -20,23 +29,30 @@ if (args.Length <= 0)
 }
 else
 {
+    log.Info($"Loading config {args[0]}");
     cfgb.AddJsonFile(args[0]);
 
     for (int i = 1; i < args.Length; i++)
     {
+        log.Info($"Loading override config {args[i]}");
         cfgb.AddJsonFile(args[i], optional: true);
     }
 }
 
 var cfg = cfgb.Build();
 
+log.Info($"Starting Telegram...");
+
 var telegram = new AlarmSystemBot(cfg["Telegram:ApiKey"], cfg["Telegram:Password"], cfg["Telegram:PersistenceStorage"]);
 await telegram.Start();
+
+log.Info($"Initializing Alarm System...");
 
 var sys = new AlarmSystem(cfg["AlarmSystemName"], TimeSpan.FromSeconds(cfg.GetValue<int>("PreArmDelay")),
     TimeSpan.FromSeconds(cfg.GetValue<int>("AlarmDelay")));
 sys.WithTelegram(telegram);
 
+log.Info($"Initializing MQTT handling...");
 var mqtt = new MqttConnector(cfg.GetValue<string>("Mqtt:Server"), cfg.GetValue<int>("Mqtt:Port"), "AlarmAnlage!");
 
 var r1 = mqtt.CreateDigitalOutput("Relay 1", "io/output/relay1/set");
@@ -82,8 +98,12 @@ preAlarmSequence.SwitchOnFor(r5, TimeSpan.FromSeconds(4))
 
 sys.WithPreAlarmSequence(preAlarmSequence);
 
+log.Info("Starting up the system...");
+
 await mqtt.Start();
 await sys.Start();
+
+log.Info("System running!");
 
 TaskCompletionSource cancelSource = new TaskCompletionSource();
 
@@ -95,6 +115,12 @@ Console.CancelKeyPress += (sender, eventArgs) =>
 
 await cancelSource.Task;
 
+log.Info("System shutting down");
+
 await sys.Stop();
 await telegram.Stop();
 await mqtt.Stop();
+
+log.Info("System was completely shut down. Bye!");
+
+return 0;
