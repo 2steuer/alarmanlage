@@ -19,7 +19,7 @@ namespace SteuerSoft.AlarmSystem.Core.Interfaces
         }
     }
 
-    internal interface IDigitalInput
+    public interface IDigitalInput
     {
         event EventHandler<DigitalInputStateEventArgs> OnStateChanged;
     }

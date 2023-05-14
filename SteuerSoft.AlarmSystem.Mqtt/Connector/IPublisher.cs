@@ -8,6 +8,6 @@ namespace SteuerSoft.AlarmSystem.Mqtt.Connector
 {
     internal interface IPublisher
     {
-        Task Publish(string payload);
+        Task PublishMessage(string topic, string payload, bool retain = false, CancellationToken ctx = default);
     }
 }

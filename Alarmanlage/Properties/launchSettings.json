@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Alarmanlage": {
+      "commandName": "Project",
+      "commandLineArgs": "config.json config.overrides.json"
+    }
+  }
+}

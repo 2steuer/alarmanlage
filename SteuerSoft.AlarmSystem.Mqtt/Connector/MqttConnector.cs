@@ -3,11 +3,14 @@ using MQTTnet.Client;
 using MQTTnet.Extensions.ManagedClient;
 using MQTTnet.Packets;
 using MQTTnet.Protocol;
+using MQTTnet.Server.Internal;
+using NLog;
 
 namespace SteuerSoft.AlarmSystem.Mqtt.Connector;
 
-public class MqttConnector
+public class MqttConnector : IPublisher
 {
+    private static ILogger _log = LogManager.GetCurrentClassLogger();
     private IManagedMqttClient? _client = null;
 
     private string _server;
@@ -25,7 +28,7 @@ public class MqttConnector
 
     public async Task Start()
     {
-        if (_client?.IsStarted ?? true)
+        if (_client?.IsStarted ?? false)
         {
             return;
         }
@@ -36,17 +39,26 @@ public class MqttConnector
                 copt.WithTcpServer(_server, _port)
                     .WithClientId(_clientId);
             }).Build();
-
+        
         _client = new MqttFactory().CreateManagedMqttClient();
+        
+        
 
         foreach (var filter in _subscribers.Keys)
         {
             await _client.SubscribeAsync(filter);
         }
 
-        _client.ApplicationMessageReceivedAsync += HandleMessage;
+        _client.UseApplicationMessageReceivedHandler(HandleMessage);
 
         await _client.StartAsync(opt);
+    }
+
+    private Task _client_ConnectionStateChangedAsync(EventArgs arg)
+    {
+        _log.Info($"MQTT Connection: {_client?.IsConnected}");
+
+        return Task.CompletedTask;
     }
 
     private async Task HandleMessage(MqttApplicationMessageReceivedEventArgs arg)
@@ -54,12 +66,12 @@ public class MqttConnector
         var topic = arg.ApplicationMessage.Topic;
 
         var rcvrs = _subscribers.Where(kvp =>
-                MqttTopicFilterComparer.Compare(topic, kvp.Key) == MqttTopicFilterCompareResult.IsMatch)
+                MqttTopicFilterComparer.IsMatch(topic, kvp.Key))
             .SelectMany(kvp => kvp.Value);
 
         var payload = arg.ApplicationMessage.ConvertPayloadToString();
 
-        await Task.WhenAll(rcvrs.Select(r => r.HandleMessage(topic, arg.ApplicationMessage.ConvertPayloadToString())));
+        await Task.WhenAll(rcvrs.Select(r => r.HandleMessage(topic, payload)));
         arg.IsHandled = true;
     }
 
@@ -106,7 +118,7 @@ public class MqttConnector
         _client = null;
     }
 
-    public Task PublishMessage(string topic, string payload)
+    public Task PublishMessage(string topic, string payload, bool retain = false, CancellationToken ctx = default)
     {
         if (_client == null)
         {
@@ -118,10 +130,11 @@ public class MqttConnector
             {
                 opt.WithTopic(topic)
                     .WithPayload(payload)
-                    .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.ExactlyOnce)
+                    .WithRetainFlag(retain)
+                    .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce)
                     .WithContentType("text/plain");
             }).Build();
-
-        return _client.EnqueueAsync(msgb);
+        
+        return _client.PublishAsync(msgb);
     }
 }

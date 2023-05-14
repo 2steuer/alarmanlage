@@ -9,22 +9,21 @@ using SteuerSoft.AlarmSystem.Mqtt.Connector;
 
 namespace SteuerSoft.AlarmSystem.Mqtt.Triggers
 {
-    internal class MqttDigitalInputTrigger : IAlarmTrigger, ISubscriber
+    internal class MqttDigitalInput : IDigitalInput, ISubscriber
     {
-        public event EventHandler<TriggerEventArgs>? Triggered;
+        public event EventHandler<DigitalInputStateEventArgs>? OnStateChanged;
+
         public string Filter { get; }
 
-        private TriggerType _triggerType;
         private string _name;
         private string _offPayload;
         private string _onPayload;
 
-        private bool _invert; // If 'true' the trigger is sent on the _offPayload value, i.e. input is inverted
+        private bool _invert; 
 
-        public MqttDigitalInputTrigger(string name, TriggerType type, string mqttfilter, string offPayload, string onPayload, bool invert)
+        public MqttDigitalInput(string name, TriggerType type, string mqttfilter, string offPayload, string onPayload, bool invert)
         {
             _name = name;
-            _triggerType = type;
             Filter = mqttfilter;
             _offPayload = offPayload;
             _onPayload = onPayload;
@@ -42,12 +41,12 @@ namespace SteuerSoft.AlarmSystem.Mqtt.Triggers
                 return Task.CompletedTask;
             }
 
-            if (active || (inActive && _invert))
-            {
-                Triggered?.Invoke(this, new TriggerEventArgs(_triggerType, _name));
-            }
+            bool state = (active || (inActive && _invert));
+
+            OnStateChanged?.Invoke(this, new DigitalInputStateEventArgs(_name, state));
 
             return Task.CompletedTask;
         }
+
     }
 }

@@ -4,6 +4,10 @@
     "Password": "VerySecret",
     "PersistenceStorage": "telegram_chats"
   },
+  "Mqtt": {
+    "Server": "localhost",
+    "Port":  1883
+  },
   "AlarmSystemName": "Test",
   "PreArmDelay": 10,
   "AlarmDelay": 10
