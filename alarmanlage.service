@@ -1,0 +1,15 @@
+[Unit]
+Description=Alarmanlage
+Requires=mosquitto.service
+After=mosquitto.service
+
+[Service]
+User=merlin
+ExecStart=/opt/dotnet/dotnet /opt/alarmanlage/Alarmanlage.dll /etc/alarmanlage.json
+WorkingDirectory=/opt/alarmanlage
+RestartSec=30
+Restart=on-failure
+SyslogIdentifier=alarmanlage
+
+[Install]
+WantedBy=multi-user.target
