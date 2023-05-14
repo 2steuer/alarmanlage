@@ -1,9 +1,12 @@
-﻿using SteuerSoft.AlarmSystem.Core.Interfaces;
+﻿using NLog;
+using SteuerSoft.AlarmSystem.Core.Interfaces;
 
 namespace SteuerSoft.AlarmSystem.Core.Sequences;
 
 public class Sequence
 {
+    private ILogger _log;
+
     public bool Repeat { get; }
 
     public string Name { get; }
@@ -20,6 +23,8 @@ public class Sequence
     {
         Name = name;
         Repeat = repeat;
+
+        _log = LogManager.GetLogger($"Sequence:{name}");
     }
 
     public Sequence Add(ISequenceEntry entry)
@@ -66,14 +71,22 @@ public class Sequence
 
         await _runnerCompletionSource.Task;
 
-        // TODO: Handle cancellation and error logging!
-        await Task.WhenAll(_entries.Select(e => e.Reset(CancellationToken.None)));
+        try
+        {
+            await Task.WhenAll(_entries.Select(e => e.Reset(CancellationToken.None)));
+        }
+        catch (Exception e)
+        {
+            _log.Error(e, $"Error while resetting sequence.");
+        }
     }
 
     private async void RunnerThread(object? state)
     {
         try
         {
+            _log.Debug($"Starting sequence.");
+
             // If Repeat == false, executes everything just once
             do
             {
@@ -85,11 +98,11 @@ public class Sequence
         }
         catch (TaskCanceledException)
         {
-            // TODO: Log
+            _log.Debug($"Stopped sequence.");
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            // TODO: log message
+            _log.Error(ex, $"Error in sequence.");
 
         }
         finally

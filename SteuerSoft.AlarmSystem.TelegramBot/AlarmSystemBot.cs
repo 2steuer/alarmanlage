@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NLog;
 using SteuerSoft.AlarmSystem.Core.Enums;
 using SteuerSoft.AlarmSystem.Core.Interfaces;
 using Telegram.Bot;
@@ -15,6 +16,8 @@ namespace SteuerSoft.AlarmSystem.TelegramBot;
 
 public class AlarmSystemBot : IAlarmSystemReporter, IPowerStateSource, IAlarmTrigger
 {
+    private static ILogger _log = LogManager.GetCurrentClassLogger();
+
     private CancellationTokenSource _cancelTokenSource = new();
 
     private TelegramBotClient _bot;
@@ -96,7 +99,7 @@ public class AlarmSystemBot : IAlarmSystemReporter, IPowerStateSource, IAlarmTri
 
     private Task PollingErrorHandler(ITelegramBotClient arg1, Exception arg2, CancellationToken arg3)
     {
-        // TODO: LOGGING
+        _log.Error(arg2, $"Error while polling of the Telegram Bot.");
         Debugger.Break();
         return Task.CompletedTask;
     }
@@ -136,7 +139,7 @@ public class AlarmSystemBot : IAlarmSystemReporter, IPowerStateSource, IAlarmTri
         }
         catch (Exception e)
         {
-            // TODO: log
+            _log.Error(e, "Error while setting power.");
         }
     }
 
@@ -157,7 +160,7 @@ public class AlarmSystemBot : IAlarmSystemReporter, IPowerStateSource, IAlarmTri
         }
         catch (Exception e)
         {
-            // TODO: LOG
+            _log.Error(e, "Error while triggering.");
         }
     }
 

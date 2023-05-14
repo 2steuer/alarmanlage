@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Appccelerate.StateMachine;
 using Appccelerate.StateMachine.AsyncMachine;
 using Appccelerate.StateMachine.AsyncMachine.States;
+using NLog;
 using SteuerSoft.AlarmSystem.Core.Enums;
 using SteuerSoft.AlarmSystem.Core.Interfaces;
 
@@ -13,6 +14,8 @@ namespace SteuerSoft.AlarmSystem.StatemachineExtensions;
 
 internal class AlarmSystemReportExtension : AsyncExtensionBase<State, Triggers>
 {
+    private static ILogger _log = LogManager.GetCurrentClassLogger();
+
     public List<IAlarmSystemReporter> Reporters { get; } = new();
 
     private string _machineName;
@@ -30,7 +33,7 @@ internal class AlarmSystemReportExtension : AsyncExtensionBase<State, Triggers>
         }
         catch (Exception e)
         {
-            // TODO: LOG
+            _log.Error(e, $"Error while SwitchedState handler.");
         }
     }
 
@@ -42,7 +45,7 @@ internal class AlarmSystemReportExtension : AsyncExtensionBase<State, Triggers>
         }
         catch (Exception e)
         {
-            // TODO: LOG
+            _log.Error(e, "Error while ReportTrigger.");
         }
     }
 }
