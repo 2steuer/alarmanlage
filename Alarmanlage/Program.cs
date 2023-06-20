@@ -10,6 +10,7 @@ using SteuerSoft.AlarmSystem.Core.Sequences;
 using SteuerSoft.AlarmSystem.Core.Sequences.Actions;
 using SteuerSoft.AlarmSystem.Mqtt;
 using SteuerSoft.AlarmSystem.Mqtt.Connector;
+using SteuerSoft.AlarmSystem.Mqtt.Reporter;
 using SteuerSoft.AlarmSystem.TelegramBot;
 
 var log = LogManager.GetCurrentClassLogger();
@@ -77,6 +78,12 @@ sys.WithPowerSwitch("Hauptschalter", sw1);
 sys.WithTrigger(doorFront, TriggerType.Alarm);
 sys.WithTrigger(doorTechnic, TriggerType.ImmediateAlarm);
 sys.WithTrigger(doorTools, TriggerType.ImmediateAlarm);
+
+var digStatePublisher = new DigitalInputStateReporter(mqtt, "alarmanlage-huette/inputs/state");
+digStatePublisher.AddDigitalInput(sw1, "An", "Aus");
+digStatePublisher.AddDigitalInput(doorFront, "Offen", "Geschlossen");
+digStatePublisher.AddDigitalInput(doorTechnic, "Offen", "Geschlossen");
+digStatePublisher.AddDigitalInput(doorTools, "Offen", "Geschlossen");
 
 
 var alarmSequence1 = new Sequence("Alarm 1", true);
