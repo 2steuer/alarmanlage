@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SteuerSoft.AlarmSystem.Mqtt.Connector
 {
-    internal interface IPublisher
+    public interface IPublisher
     {
         Task PublishMessage(string topic, string payload, bool retain = false, CancellationToken ctx = default);
     }

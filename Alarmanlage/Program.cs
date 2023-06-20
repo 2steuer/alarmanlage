@@ -112,6 +112,8 @@ sys.WithPreAlarmSequence(preAlarmSequence);
 
 log.Info("Starting up the system...");
 
+sys.WithMqttStateReporter(mqtt, "alarmanlage-huette/state");
+
 await mqtt.Start();
 await sys.Start();
 
