@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using MQTTnet.Diagnostics;
 using NLog;
 using SteuerSoft.AlarmSystem;
+using SteuerSoft.AlarmSystem.Core.Enums;
 using SteuerSoft.AlarmSystem.Core.Sequences;
 using SteuerSoft.AlarmSystem.Core.Sequences.Actions;
 using SteuerSoft.AlarmSystem.Mqtt;
@@ -64,9 +65,18 @@ var r6 = mqtt.CreateDigitalOutput("Relay 6", "io/output/relay6/set");
 var r7 = mqtt.CreateDigitalOutput("Relay 7", "io/output/relay7/set");
 var r8 = mqtt.CreateDigitalOutput("Relay 8", "io/output/relay8/set");
 
-var sw1 = mqtt.CreateDigitalInput("TestSwitch", "test/switch1");
+var sw1 = mqtt.CreateDigitalInput("Hauptschalter", "io/input/in1");
 
-sys.WithPowerSwitch("TestDoor", sw1);
+var doorFront = mqtt.CreateDigitalInput("Tür Hauptraum", "io/input/in2");
+var doorTechnic = mqtt.CreateDigitalInput("Tür Technikraum", "io/input/in3");
+var doorTools = mqtt.CreateDigitalInput("Tür Geräteraum", "io/input/in4");
+
+
+sys.WithPowerSwitch("Hauptschalter", sw1);
+
+sys.WithTrigger(doorFront, TriggerType.Alarm);
+sys.WithTrigger(doorTechnic, TriggerType.ImmediateAlarm);
+sys.WithTrigger(doorTools, TriggerType.ImmediateAlarm);
 
 
 var alarmSequence1 = new Sequence("Alarm 1", true);
@@ -87,7 +97,9 @@ sys.WithAlarmSequence(alarmSequence1);
 sys.WithAlarmSequence(alarmSequence2);
 
 var powerToggleSequence = new Sequence("Power Toggle", false);
-powerToggleSequence.SwitchOnFor(r4, TimeSpan.FromSeconds(2));
+powerToggleSequence.SwitchOnFor(r4, TimeSpan.FromSeconds(0.5));
+powerToggleSequence.Delay(TimeSpan.FromSeconds(0.5));
+powerToggleSequence.SwitchOnFor(r4, TimeSpan.FromSeconds(1));
 
 sys.WithPowerOnSequence(powerToggleSequence);
 sys.WithPowerOffSequence(powerToggleSequence);
