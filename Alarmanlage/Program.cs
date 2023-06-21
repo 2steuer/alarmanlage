@@ -86,13 +86,36 @@ digStatePublisher.AddDigitalInput(doorTechnic, "Offen", "Geschlossen");
 digStatePublisher.AddDigitalInput(doorTools, "Offen", "Geschlossen");
 
 
-var alarmSequence1 = new Sequence("Alarm 1", true);
+var alarmSequence1 = new Sequence("Alarm", true);
 alarmSequence1.Switch(beepHinten, true)
     .Switch(beepVorn, true)
-    //.Switch(sirene, true)
-    .Delay(TimeSpan.FromSeconds(30));
+    .Switch(sirene, true)
+    .Delay(TimeSpan.FromSeconds(60));
+
+var hornSequence = new Sequence("Horn", false)
+    .Delay(TimeSpan.FromSeconds(20))
+    .SwitchOnFor(horn, TimeSpan.FromSeconds(3))
+    .Delay(TimeSpan.FromSeconds(4))
+    .SwitchOnFor(horn, TimeSpan.FromSeconds(3))
+    .Delay(TimeSpan.FromSeconds(4))
+    .SwitchOnFor(horn, TimeSpan.FromSeconds(3))
+    .Delay(TimeSpan.FromSeconds(60))
+    .SwitchOnFor(horn, TimeSpan.FromSeconds(3))
+    .Delay(TimeSpan.FromSeconds(4))
+    .SwitchOnFor(horn, TimeSpan.FromSeconds(3))
+    .Delay(TimeSpan.FromSeconds(4))
+    .SwitchOnFor(horn, TimeSpan.FromSeconds(3))
+    .Delay(TimeSpan.FromSeconds(60))
+    .SwitchOnFor(horn, TimeSpan.FromSeconds(3))
+    .Delay(TimeSpan.FromSeconds(4))
+    .SwitchOnFor(horn, TimeSpan.FromSeconds(3))
+    .Delay(TimeSpan.FromSeconds(4))
+    .SwitchOnFor(horn, TimeSpan.FromSeconds(3));
+
+
 
 sys.WithAlarmSequence(alarmSequence1);
+sys.WithAlarmSequence(hornSequence);
 
 var powerToggleSequence = new Sequence("Power Toggle", false);
 powerToggleSequence.SwitchOnFor(beepHinten, TimeSpan.FromSeconds(0.5));
