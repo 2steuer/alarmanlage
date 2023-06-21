@@ -89,21 +89,22 @@ digStatePublisher.AddDigitalInput(doorTools, "Offen", "Geschlossen");
 var alarmSequence1 = new Sequence("Alarm 1", true);
 alarmSequence1.Switch(beepHinten, true)
     .Switch(beepVorn, true)
-    .Switch(sirene, true);
+    //.Switch(sirene, true)
+    .Delay(TimeSpan.FromSeconds(30));
 
 sys.WithAlarmSequence(alarmSequence1);
 
 var powerToggleSequence = new Sequence("Power Toggle", false);
 powerToggleSequence.SwitchOnFor(beepHinten, TimeSpan.FromSeconds(0.5));
 powerToggleSequence.Delay(TimeSpan.FromSeconds(0.5));
-powerToggleSequence.SwitchOnFor(beepHinten, TimeSpan.FromSeconds(1));
+powerToggleSequence.SwitchOnFor(beepHinten, TimeSpan.FromSeconds(0.5));
 
 sys.WithPowerOnSequence(powerToggleSequence);
 sys.WithPowerOffSequence(powerToggleSequence);
 
 var preAlarmSequence = new Sequence("Pre-Alarm", true);
 preAlarmSequence.SwitchOnFor(beepVorn, TimeSpan.FromSeconds(1))
-    .Delay(TimeSpan.FromSeconds(2));
+    .Delay(TimeSpan.FromSeconds(1));
 
 sys.WithPreAlarmSequence(preAlarmSequence);
 
