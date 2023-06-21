@@ -57,10 +57,10 @@ sys.WithTelegram(telegram);
 log.Info($"Initializing MQTT handling...");
 var mqtt = new MqttConnector(cfg.GetValue<string>("Mqtt:Server"), cfg.GetValue<int>("Mqtt:Port"), "AlarmAnlage!");
 
-var r1 = mqtt.CreateDigitalOutput("Relay 1", "io/output/relay1/set");
-var r2 = mqtt.CreateDigitalOutput("Relay 2", "io/output/relay2/set");
-var r3 = mqtt.CreateDigitalOutput("Relay 3", "io/output/relay3/set");
-var r4 = mqtt.CreateDigitalOutput("Relay 4", "io/output/relay4/set");
+var beepHinten = mqtt.CreateDigitalOutput("Buzzer hinten", "io/output/relay1/set");
+var sirene = mqtt.CreateDigitalOutput("Sirene außen", "io/output/relay2/set");
+var beepVorn = mqtt.CreateDigitalOutput("Buzzer vorn", "io/output/relay3/set");
+var horn = mqtt.CreateDigitalOutput("Horn", "io/output/relay4/set");
 var r5 = mqtt.CreateDigitalOutput("Relay 5", "io/output/relay5/set");
 var r6 = mqtt.CreateDigitalOutput("Relay 6", "io/output/relay6/set");
 var r7 = mqtt.CreateDigitalOutput("Relay 7", "io/output/relay7/set");
@@ -87,32 +87,22 @@ digStatePublisher.AddDigitalInput(doorTools, "Offen", "Geschlossen");
 
 
 var alarmSequence1 = new Sequence("Alarm 1", true);
-alarmSequence1.Delay(TimeSpan.FromSeconds(0.5));
-alarmSequence1.SwitchOnFor(r1, TimeSpan.FromSeconds(1));
-
-var alarmSequence2 = new Sequence("Alarm 2", true);
-alarmSequence2.Switch(r2, true)
-    .Delay(TimeSpan.FromSeconds(0.7))
-    .Switch(r3, true)
-    .Delay(TimeSpan.FromSeconds(0.7))
-    .Switch(r2, false)
-    .Delay(TimeSpan.FromSeconds(0.7))
-    .Switch(r3, false)
-    .Delay(TimeSpan.FromSeconds(0.7));
+alarmSequence1.Switch(beepHinten, true)
+    .Switch(beepVorn, true)
+    .Switch(sirene, true);
 
 sys.WithAlarmSequence(alarmSequence1);
-sys.WithAlarmSequence(alarmSequence2);
 
 var powerToggleSequence = new Sequence("Power Toggle", false);
-powerToggleSequence.SwitchOnFor(r4, TimeSpan.FromSeconds(0.5));
+powerToggleSequence.SwitchOnFor(beepHinten, TimeSpan.FromSeconds(0.5));
 powerToggleSequence.Delay(TimeSpan.FromSeconds(0.5));
-powerToggleSequence.SwitchOnFor(r4, TimeSpan.FromSeconds(1));
+powerToggleSequence.SwitchOnFor(beepHinten, TimeSpan.FromSeconds(1));
 
 sys.WithPowerOnSequence(powerToggleSequence);
 sys.WithPowerOffSequence(powerToggleSequence);
 
 var preAlarmSequence = new Sequence("Pre-Alarm", true);
-preAlarmSequence.SwitchOnFor(r5, TimeSpan.FromSeconds(4))
+preAlarmSequence.SwitchOnFor(beepVorn, TimeSpan.FromSeconds(1))
     .Delay(TimeSpan.FromSeconds(2));
 
 sys.WithPreAlarmSequence(preAlarmSequence);
