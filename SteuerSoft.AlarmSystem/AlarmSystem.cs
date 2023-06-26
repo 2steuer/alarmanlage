@@ -54,7 +54,7 @@ public class AlarmSystem : IAlarmSystemConfigurator
             .Goto(State.Arming);
 
         b.In(State.Arming)
-            .ExecuteOnEntry(() => _stateMachine.FireDelayed(Triggers.ArmingDelayElapsed, armingDelay))
+            .ExecuteOnEntry(() => _stateMachine!.FireDelayed(Triggers.ArmingDelayElapsed, armingDelay))
             .On(Triggers.TogglePower)
             .Goto(State.Off)
             .On(Triggers.PowerOff)

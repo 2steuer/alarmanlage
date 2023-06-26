@@ -21,6 +21,11 @@ namespace SteuerSoft.AlarmSystem.Core.Interfaces
 
     public interface IDigitalInput
     {
+        /// <summary>
+        /// The current state of the digital input. Either high (true) or low (false).
+        /// </summary>
+        public bool State { get; }
+
         event EventHandler<DigitalInputStateEventArgs> OnStateChanged;
     }
 }

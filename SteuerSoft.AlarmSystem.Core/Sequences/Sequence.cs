@@ -17,7 +17,7 @@ public class Sequence
 
     private CancellationTokenSource _cancelTokenSource = new CancellationTokenSource();
 
-    private TaskCompletionSource<bool> _runnerCompletionSource = new TaskCompletionSource<bool>();
+    private TaskCompletionSource<bool>? _runnerCompletionSource = new TaskCompletionSource<bool>();
 
     public Sequence(string name, bool repeat)
     {
