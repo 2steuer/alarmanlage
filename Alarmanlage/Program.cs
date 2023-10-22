@@ -51,7 +51,8 @@ await telegram.Start();
 log.Info($"Initializing Alarm System...");
 
 var sys = new AlarmSystem(cfg["AlarmSystemName"], TimeSpan.FromSeconds(cfg.GetValue<int>("PreArmDelay")),
-    TimeSpan.FromSeconds(cfg.GetValue<int>("AlarmDelay")));
+    TimeSpan.FromSeconds(cfg.GetValue<int>("AlarmDelay")), 
+    TimeSpan.FromSeconds(cfg.GetValue<int>("AlarmDelayOnPowerOn")));
 sys.WithTelegram(telegram);
 
 log.Info($"Initializing MQTT handling...");

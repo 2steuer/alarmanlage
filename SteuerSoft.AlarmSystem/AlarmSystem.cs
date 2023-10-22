@@ -34,7 +34,7 @@ public class AlarmSystem : IAlarmSystemConfigurator
 
     private string _name;
 
-    public AlarmSystem(string name, TimeSpan armingDelay, TimeSpan alarmDelay)
+    public AlarmSystem(string name, TimeSpan armingDelay, TimeSpan alarmDelay, TimeSpan alarmDelayOnPowerOn)
     {
         _log = LogManager.GetLogger(name, typeof(AlarmSystem));
 
@@ -60,7 +60,11 @@ public class AlarmSystem : IAlarmSystemConfigurator
             .On(Triggers.PowerOff)
             .Goto(State.Off)
             .On(Triggers.ArmingDelayElapsed)
-            .Goto(State.Idle);
+                .If(() => _triggers.Any(t => t.InAlarmState()))
+                    .Goto(State.PreAlarm)
+                    .Execute(() => _stateMachine!.FireDelayed(Triggers.PreAlarmDelayElapsed, alarmDelayOnPowerOn))
+                .Otherwise()
+                    .Goto(State.Idle);
 
         b.In(State.Idle)
             .ExecuteOnEntry(() => StartSequences(_powerOnSequences))
@@ -70,12 +74,12 @@ public class AlarmSystem : IAlarmSystemConfigurator
             .On(Triggers.PowerOff)
             .Goto(State.Off)
             .On(Triggers.Alarm)
-            .Goto(State.PreAlarm)
+                .Goto(State.PreAlarm)
+                .Execute(() => _stateMachine!.FireDelayed(Triggers.PreAlarmDelayElapsed, alarmDelay))
             .On(Triggers.ImmediateAlarm)
             .Goto(State.Alarm);
 
         b.In(State.PreAlarm)
-            .ExecuteOnEntry(() => _stateMachine.FireDelayed(Triggers.PreAlarmDelayElapsed, alarmDelay))
             .ExecuteOnEntry(() => StartSequences(_preAlarmSequences))
             .ExecuteOnExit(() => StopSequences(_preAlarmSequences))
             .On(Triggers.TogglePower)

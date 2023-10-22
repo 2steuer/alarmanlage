@@ -18,4 +18,6 @@ public class TriggerEventArgs : EventArgs
 public interface IAlarmTrigger
 {
     event EventHandler<TriggerEventArgs> Triggered;
+
+    bool InAlarmState();
 }

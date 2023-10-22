@@ -210,4 +210,10 @@ public class AlarmSystemBot : IAlarmSystemReporter, IPowerStateSource, IAlarmTri
     public string Name { get; } = "Telegram Bot";
 
     public event EventHandler<TriggerEventArgs>? Triggered;
+
+
+    public bool InAlarmState()
+    {
+        return false;
+    }
 }

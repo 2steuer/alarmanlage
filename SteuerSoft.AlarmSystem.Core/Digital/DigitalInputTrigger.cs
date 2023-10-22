@@ -16,6 +16,8 @@ namespace SteuerSoft.AlarmSystem.Core.Digital
         private bool _triggerState;
         private TriggerType _Type;
 
+        private bool _isInAlarmState = false;
+
         public DigitalInputTrigger(IDigitalInput @in, TriggerType type, bool triggerState = true)
         {
             _in = @in;
@@ -27,10 +29,17 @@ namespace SteuerSoft.AlarmSystem.Core.Digital
 
         private void DigitalInputChanged(object? sender, DigitalInputStateEventArgs e)
         {
-            if (e.NewState == _triggerState)
+            _isInAlarmState = e.NewState == _triggerState;
+
+            if (_isInAlarmState)
             {
                 Triggered?.Invoke(this, new TriggerEventArgs(_Type, $"Digital In: {e.Name}"));
             }
+        }
+
+        public bool InAlarmState()
+        {
+            return _isInAlarmState;
         }
 
         public void Dispose()

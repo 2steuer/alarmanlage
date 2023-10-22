@@ -10,5 +10,6 @@
   },
   "AlarmSystemName": "Test",
   "PreArmDelay": 10,
-  "AlarmDelay": 10
+  "AlarmDelay": 10,
+  "AlarmDelayOnPowerOn": 30
 }
