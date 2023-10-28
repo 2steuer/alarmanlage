@@ -3,7 +3,7 @@ using SteuerSoft.AlarmSystem.Core.Interfaces;
 
 namespace SteuerSoft.AlarmSystem.Core.Sequences;
 
-public class Sequence
+public class Sequence : ISequenceBuilder
 {
     private ILogger _log;
 
@@ -27,7 +27,7 @@ public class Sequence
         _log = LogManager.GetLogger($"Sequence:{name}");
     }
 
-    public Sequence Add(ISequenceEntry entry)
+    public ISequenceBuilder AddAction(ISequenceEntry entry)
     {
         _entries.Add(entry);
 

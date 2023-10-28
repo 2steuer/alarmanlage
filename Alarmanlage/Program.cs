@@ -93,26 +93,17 @@ alarmSequence1.Switch(beepHinten, true)
     .Switch(sirene, true)
     .Delay(TimeSpan.FromSeconds(60));
 
-var hornSequence = new Sequence("Horn", false)
-    .Delay(TimeSpan.FromSeconds(20))
-    .SwitchOnFor(horn, TimeSpan.FromSeconds(3))
-    .Delay(TimeSpan.FromSeconds(4))
-    .SwitchOnFor(horn, TimeSpan.FromSeconds(3))
-    .Delay(TimeSpan.FromSeconds(4))
-    .SwitchOnFor(horn, TimeSpan.FromSeconds(3))
-    .Delay(TimeSpan.FromSeconds(60))
-    .SwitchOnFor(horn, TimeSpan.FromSeconds(3))
-    .Delay(TimeSpan.FromSeconds(4))
-    .SwitchOnFor(horn, TimeSpan.FromSeconds(3))
-    .Delay(TimeSpan.FromSeconds(4))
-    .SwitchOnFor(horn, TimeSpan.FromSeconds(3))
-    .Delay(TimeSpan.FromSeconds(60))
-    .SwitchOnFor(horn, TimeSpan.FromSeconds(3))
-    .Delay(TimeSpan.FromSeconds(4))
-    .SwitchOnFor(horn, TimeSpan.FromSeconds(3))
-    .Delay(TimeSpan.FromSeconds(4))
-    .SwitchOnFor(horn, TimeSpan.FromSeconds(3));
-
+var hornSequence = new Sequence("Horn", false);
+hornSequence.Delay(TimeSpan.FromSeconds(20))
+    .Repeat(3, builder =>
+    {
+        builder.SwitchOnFor(horn, TimeSpan.FromSeconds(6))
+            .Delay(TimeSpan.FromSeconds(4))
+            .SwitchOnFor(horn, TimeSpan.FromSeconds(6))
+            .Delay(TimeSpan.FromSeconds(4))
+            .SwitchOnFor(horn, TimeSpan.FromSeconds(6))
+            .Delay(TimeSpan.FromSeconds(60));
+    });
 
 
 sys.WithAlarmSequence(alarmSequence1);

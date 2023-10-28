@@ -4,20 +4,28 @@ namespace SteuerSoft.AlarmSystem.Core.Sequences.Actions;
 
 public static class ActionAdderExtensions
 {
-    public static Sequence Delay(this Sequence seq, TimeSpan delay)
+    public static ISequenceBuilder Delay(this ISequenceBuilder seq, TimeSpan delay)
     {
-        return seq.Add(new DelayAction(delay));
+        return seq.AddAction(new DelayAction(delay));
     }
 
-    public static Sequence Switch(this Sequence seq, IDigitalOutput actuator, bool desiredState)
+    public static ISequenceBuilder Switch(this ISequenceBuilder seq, IDigitalOutput actuator, bool desiredState)
     {
-        return seq.Add(new SwitchAction(actuator, desiredState));
+        return seq.AddAction(new SwitchAction(actuator, desiredState));
     }
 
-    public static Sequence SwitchOnFor(this Sequence seq, IDigitalOutput actuator, TimeSpan onTime)
+    public static ISequenceBuilder SwitchOnFor(this ISequenceBuilder seq, IDigitalOutput actuator, TimeSpan onTime)
     {
         return seq.Switch(actuator, true)
             .Delay(onTime)
             .Switch(actuator, false);
+    }
+
+    public static ISequenceBuilder Repeat(this ISequenceBuilder seq, int repeatCount, Action<ISequenceBuilder>? actions)
+    {
+        var ra = new RepeatAction(repeatCount);
+        actions?.Invoke(ra);
+
+        return seq.AddAction(ra);
     }
 }
