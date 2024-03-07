@@ -46,6 +46,9 @@ var cfg = cfgb.Build();
 log.Info($"Starting Telegram...");
 
 var telegram = new AlarmSystemBot(cfg["Telegram:ApiKey"], cfg["Telegram:Password"], cfg["Telegram:PersistenceStorage"]);
+telegram.SendInputStateChangesWhenOff = false;
+telegram.SendInputStateChanges = true;
+
 await telegram.Start();
 
 log.Info($"Initializing Alarm System...");

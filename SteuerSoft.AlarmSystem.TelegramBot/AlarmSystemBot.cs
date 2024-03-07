@@ -28,6 +28,12 @@ public class AlarmSystemBot : IAlarmSystemReporter, IPowerStateSource, IAlarmTri
 
     private string _persistencePath;
 
+    public bool SendInputStateChanges { get; set; } = true;
+
+    public bool SendInputStateChangesWhenOff { get; set; } = false;
+
+    private bool _systemOn = false;
+
     public AlarmSystemBot(string apiToken, string password, string persistencePath)
     {
         _bot = new TelegramBotClient(apiToken);
@@ -172,10 +178,12 @@ public class AlarmSystemBot : IAlarmSystemReporter, IPowerStateSource, IAlarmTri
         switch (newState)
         {
             case State.Off:
+                _systemOn = false;
                 msg.AppendLine("Alarmanlage ausgeschaltet.");
                 break;
 
             case State.Idle:
+                _systemOn = true;
                 msg.AppendLine("Alarmanlage angeschaltet und bereit.");
                 break;
 
@@ -198,6 +206,11 @@ public class AlarmSystemBot : IAlarmSystemReporter, IPowerStateSource, IAlarmTri
 
     public Task NewTrigger(string name, string triggerName, TriggerType type)
     {
+        if (SendInputStateChanges && (SendInputStateChangesWhenOff || _systemOn))
+        {
+            return Task.CompletedTask;
+        }
+
         StringBuilder sb = new StringBuilder();
         sb.AppendLine($"### Auslöser detektiert!");
         sb.AppendLine($"*Auslöser:* {triggerName}");
