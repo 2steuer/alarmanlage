@@ -28,13 +28,15 @@ public class AlarmSystem : IAlarmSystemConfigurator
 
     private List<Sequence> _powerOffSequences = new();
 
+    private List<Sequence> _testAlarmSequences = new();
+
     private List<IAlarmTrigger> _triggers = new();
 
     private AlarmSystemReportExtension _reporter;
 
     private string _name;
 
-    public AlarmSystem(string name, TimeSpan armingDelay, TimeSpan alarmDelay, TimeSpan alarmDelayOnPowerOn)
+    public AlarmSystem(string name, TimeSpan armingDelay, TimeSpan alarmDelay, TimeSpan alarmDelayOnPowerOn, TimeSpan testAlarmDuration)
     {
         _log = LogManager.GetLogger(name, typeof(AlarmSystem));
 
@@ -51,7 +53,24 @@ public class AlarmSystem : IAlarmSystemConfigurator
             .Goto(State.Arming)
             
             .On(Triggers.PowerOn)
-            .Goto(State.Arming);
+            .Goto(State.Arming)
+            
+            .On(Triggers.TestAlarm)
+            .Goto(State.TestAlarm)
+            .Execute(() => StartSequences(_testAlarmSequences));
+
+        b.In(State.TestAlarm)
+            .ExecuteOnEntry(() => _stateMachine?.FireDelayed(Triggers.EndTestAlarm, testAlarmDuration))
+            .ExecuteOnExit(() => StopSequences(_testAlarmSequences))
+
+            .On(Triggers.EndTestAlarm)
+            .Goto(State.Off)
+
+            .On(Triggers.TogglePower)
+            .Goto(State.Off)
+
+            .On(Triggers.PowerOff)
+            .Goto(State.Off);
 
         b.In(State.Arming)
             .ExecuteOnEntry(() => _stateMachine!.FireDelayed(Triggers.ArmingDelayElapsed, armingDelay))
@@ -179,6 +198,12 @@ public class AlarmSystem : IAlarmSystemConfigurator
     public IAlarmSystemConfigurator WithAlarmSequence(Sequence seq)
     {
         _alarmSequences.Add(seq);
+        return this;
+    }
+
+    public IAlarmSystemConfigurator WithTestAlarmSequence(Sequence seq)
+    {
+        _testAlarmSequences.Add(seq);
         return this;
     }
 

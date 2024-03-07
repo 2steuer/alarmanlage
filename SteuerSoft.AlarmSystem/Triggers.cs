@@ -8,5 +8,7 @@ enum Triggers
     ArmingDelayElapsed,
     PreAlarmDelayElapsed,
     Alarm,
-    ImmediateAlarm
+    ImmediateAlarm,
+    TestAlarm,
+    EndTestAlarm
 }

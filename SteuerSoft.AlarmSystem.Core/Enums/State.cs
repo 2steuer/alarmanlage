@@ -6,5 +6,6 @@ public enum State
     Arming,
     Idle,
     PreAlarm,
-    Alarm
+    Alarm,
+    TestAlarm
 }

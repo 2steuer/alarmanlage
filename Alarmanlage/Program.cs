@@ -55,7 +55,8 @@ log.Info($"Initializing Alarm System...");
 
 var sys = new AlarmSystem(cfg["AlarmSystemName"], TimeSpan.FromSeconds(cfg.GetValue<int>("PreArmDelay")),
     TimeSpan.FromSeconds(cfg.GetValue<int>("AlarmDelay")), 
-    TimeSpan.FromSeconds(cfg.GetValue<int>("AlarmDelayOnPowerOn")));
+    TimeSpan.FromSeconds(cfg.GetValue<int>("AlarmDelayOnPowerOn")),
+    TimeSpan.FromSeconds(10));
 sys.WithTelegram(telegram);
 
 log.Info($"Initializing MQTT handling...");
@@ -125,6 +126,15 @@ preAlarmSequence.SwitchOnFor(beepVorn, TimeSpan.FromSeconds(1))
     .Delay(TimeSpan.FromSeconds(1));
 
 sys.WithPreAlarmSequence(preAlarmSequence);
+
+var testSequence = new Sequence("Test-Alarm", true);
+
+testSequence.SwitchOnFor(beepHinten, TimeSpan.FromSeconds(2))
+    .SwitchOnFor(beepVorn, TimeSpan.FromSeconds(2))
+    .SwitchOnFor(sirene, TimeSpan.FromSeconds(2))
+    .SwitchOnFor(horn, TimeSpan.FromSeconds(2));
+
+sys.WithTestAlarmSequence(testSequence);
 
 log.Info("Starting up the system...");
 
