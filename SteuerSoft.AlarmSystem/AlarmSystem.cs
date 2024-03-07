@@ -135,6 +135,8 @@ public class AlarmSystem : IAlarmSystemConfigurator
 
     public Task Alarm() => _stateMachine.Fire(Triggers.Alarm);
 
+    public Task TestAlarm() => _stateMachine.Fire(Triggers.TestAlarm);
+
     public Task ImmediateAlarm() => _stateMachine.Fire(Triggers.ImmediateAlarm);
 
     private void PowerToggleReceived(object? sender, EventArgs e)
@@ -162,6 +164,10 @@ public class AlarmSystem : IAlarmSystemConfigurator
 
             case TriggerType.ImmediateAlarm:
                 await ImmediateAlarm();
+                break;
+
+            case TriggerType.Test:
+                await TestAlarm();
                 break;
         }
     }

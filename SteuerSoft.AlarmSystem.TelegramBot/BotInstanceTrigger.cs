@@ -17,6 +17,7 @@ internal enum BotInstanceTrigger
     PowerOn,
     Alarm,
     ImmediateAlarm,
+    TestAlarm,
     Logout,
 
     GotoPageAlarm,

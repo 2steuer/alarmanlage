@@ -3,5 +3,6 @@
 public enum TriggerType
 {
     Alarm,
-    ImmediateAlarm
+    ImmediateAlarm,
+    Test
 }

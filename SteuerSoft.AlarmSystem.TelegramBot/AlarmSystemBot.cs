@@ -214,7 +214,13 @@ public class AlarmSystemBot : IAlarmSystemReporter, IPowerStateSource, IAlarmTri
         StringBuilder sb = new StringBuilder();
         sb.AppendLine($"### Auslöser detektiert!");
         sb.AppendLine($"*Auslöser:* {triggerName}");
-        sb.AppendLine($"*Typ:* {(type == TriggerType.Alarm ? "Normal" : "Sofort")}");
+        sb.AppendLine($"*Typ:* {type switch
+        {
+            TriggerType.Test => "Test",
+            TriggerType.Alarm => "Normal",
+            TriggerType.ImmediateAlarm => "Sofort",
+            _ => ""
+        }}");
 
         return Task.WhenAll(_instances.Select(kvp => kvp.Value.SendMessage(sb.ToString())));
     }

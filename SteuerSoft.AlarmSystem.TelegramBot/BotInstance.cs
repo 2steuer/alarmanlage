@@ -113,6 +113,10 @@ internal class BotInstance
             .Goto(BotInstanceState.AuthorizedMain)
             .Execute(Alarm)
 
+            .On(BotInstanceTrigger.TestAlarm)
+            .Goto(BotInstanceState.AuthorizedAlarm)
+            .Execute(TestAlarm)
+
             .On(BotInstanceTrigger.ImmediateAlarm)
             .Goto(BotInstanceState.AuthorizedMain)
             .Execute(ImmediateAlarm)
@@ -247,6 +251,7 @@ internal class BotInstance
         var m = Keyboard(
             Row(Button("Normaler Alarm", BotInstanceTrigger.Alarm)),
             Row(Button("Sofortalarm!", BotInstanceTrigger.ImmediateAlarm)),
+            Row(Button("Test-Alarm", BotInstanceTrigger.TestAlarm)),
             Row(Button("Zurück", BotInstanceTrigger.GoBack)));
 
         await ClearKeyboard();
@@ -294,6 +299,13 @@ internal class BotInstance
         await SendMessage("Löse Sofortalarm aus...");
 
         _trigger?.Invoke(TriggerType.ImmediateAlarm, _userName);
+    }
+
+    private async Task TestAlarm()
+    {
+        await SendMessage("Starte Test-Alarm");
+
+        _trigger?.Invoke(TriggerType.Test, _userName);
     }
 
     public async Task ProcessUpdate(Update update)
