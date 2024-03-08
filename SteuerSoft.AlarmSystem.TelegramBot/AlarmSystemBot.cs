@@ -206,7 +206,7 @@ public class AlarmSystemBot : IAlarmSystemReporter, IPowerStateSource, IAlarmTri
 
     public Task NewTrigger(string name, string triggerName, TriggerType type)
     {
-        if (SendInputStateChanges && (SendInputStateChangesWhenOff || _systemOn))
+        if (!SendInputStateChanges || (!SendInputStateChangesWhenOff && !_systemOn))
         {
             return Task.CompletedTask;
         }
