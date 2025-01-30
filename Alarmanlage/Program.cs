@@ -11,7 +11,7 @@ using SteuerSoft.AlarmSystem.Core.Sequences.Actions;
 using SteuerSoft.AlarmSystem.Mqtt;
 using SteuerSoft.AlarmSystem.Mqtt.Connector;
 using SteuerSoft.AlarmSystem.Mqtt.Reporter;
-using SteuerSoft.AlarmSystem.TelegramBot;
+using SteuerSoft.AlarmSystem.Ntfy;
 
 var log = LogManager.GetCurrentClassLogger();
 
@@ -43,13 +43,11 @@ else
 
 var cfg = cfgb.Build();
 
-log.Info($"Starting Telegram...");
-
-var telegram = new AlarmSystemBot(cfg["Telegram:ApiKey"], cfg["Telegram:Password"], cfg["Telegram:PersistenceStorage"]);
-telegram.SendInputStateChangesWhenOff = false;
-telegram.SendInputStateChanges = true;
-
-await telegram.Start();
+var ntfy = new NtfyNotificationSender(
+    cfg.GetValue<string>("Ntfy:Url", "") ?? throw new ArgumentException("Ntfy URL not configured."), 
+    cfg.GetValue<string>("Ntfy:Topic", "") ?? throw new ArgumentException("Ntfy Topic not configured."), 
+    cfg.GetValue<string>("Ntfy:Token") ?? throw new ArgumentException("Ntfy API Token not configured.")
+    );
 
 log.Info($"Initializing Alarm System...");
 
@@ -57,7 +55,6 @@ var sys = new AlarmSystem(cfg["AlarmSystemName"], TimeSpan.FromSeconds(cfg.GetVa
     TimeSpan.FromSeconds(cfg.GetValue<int>("AlarmDelay")), 
     TimeSpan.FromSeconds(cfg.GetValue<int>("AlarmDelayOnPowerOn")),
     TimeSpan.FromSeconds(10));
-sys.WithTelegram(telegram);
 
 log.Info($"Initializing MQTT handling...");
 var mqtt = new MqttConnector(cfg.GetValue<string>("Mqtt:Server"), cfg.GetValue<int>("Mqtt:Port"), "AlarmAnlage!");
@@ -138,6 +135,7 @@ sys.WithTestAlarmSequence(testSequence);
 
 log.Info("Starting up the system...");
 
+sys.WithReporter(ntfy);
 sys.WithMqttStateReporter(mqtt, "alarmanlage-huette/state");
 
 await mqtt.Start();
@@ -175,7 +173,6 @@ await cancelSource.Task;
 log.Info("System shutting down");
 
 await sys.Stop();
-await telegram.Stop();
 await mqtt.Stop();
 
 log.Info("System was completely shut down. Bye!");

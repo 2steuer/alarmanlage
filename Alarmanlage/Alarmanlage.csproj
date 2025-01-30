@@ -16,8 +16,8 @@
   <ItemGroup>
     <ProjectReference Include="..\SteuerSoft.AlarmSystem.Core\SteuerSoft.AlarmSystem.Core.csproj" />
     <ProjectReference Include="..\SteuerSoft.AlarmSystem.Mqtt\SteuerSoft.AlarmSystem.Mqtt.csproj" />
-    <ProjectReference Include="..\SteuerSoft.AlarmSystem.TelegramBot\SteuerSoft.AlarmSystem.TelegramBot.csproj" />
     <ProjectReference Include="..\SteuerSoft.AlarmSystem\SteuerSoft.AlarmSystem.csproj" />
+    <ProjectReference Include="..\SteuerSoft.AlarmSystem.Ntfy\SteuerSoft.AlarmSystem.Ntfy.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,12 +1,12 @@
 {
-  "Telegram": {
-    "ApiKey": "PLACE IT HERE",
-    "Password": "VerySecret",
-    "PersistenceStorage": "telegram_chats"
-  },
   "Mqtt": {
     "Server": "localhost",
     "Port":  1883
+  },
+  "Ntfy": {
+    "Url": "",
+    "Token": "",
+    "Topic": "alarmanlage"
   },
   "AlarmSystemName": "Test",
   "PreArmDelay": 10,
