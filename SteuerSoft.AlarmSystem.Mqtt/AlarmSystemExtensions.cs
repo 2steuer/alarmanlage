@@ -7,6 +7,7 @@ using SteuerSoft.AlarmSystem;
 using SteuerSoft.AlarmSystem.Core.Enums;
 using SteuerSoft.AlarmSystem.Core.Interfaces;
 using SteuerSoft.AlarmSystem.Mqtt.Connector;
+using SteuerSoft.AlarmSystem.Mqtt.Control;
 using SteuerSoft.AlarmSystem.Mqtt.Reporter;
 using SteuerSoft.AlarmSystem.Mqtt.Triggers;
 
@@ -25,12 +26,23 @@ namespace SteuerSoft.AlarmSystem.Mqtt
             return configurator;
         }
 
+        public static IAlarmSystemConfigurator WithMqttControl(this IAlarmSystemConfigurator cfg, MqttConnector connector, string topic)
+        {
+            var sub = new MqttControlInput(topic);
+            connector.AddSubscriber(sub).Wait();
+
+            cfg.WithTrigger(sub);
+            cfg.WithPowerSwitch(sub);
+            cfg.WithPowerToggle(sub);
+
+            return cfg;
+        }
+
         public static IAlarmSystemConfigurator WithMqttStateReporter(this IAlarmSystemConfigurator configurator,
             MqttConnector connector, string topic)
         {
             var rep = new MqttStateReporter(connector, topic);
             configurator.WithReporter(rep);
-
             return configurator;
         }
     }

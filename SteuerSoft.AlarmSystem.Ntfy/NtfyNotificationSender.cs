@@ -82,15 +82,15 @@ public class NtfyNotificationSender : IAlarmSystemReporter
         msg.Title = "Auslöser detektiert!";
 
         StringBuilder sb = new StringBuilder();
-        sb.AppendLine($"*Auslöser:* {triggerName}");
-        sb.AppendLine($"*Typ:* {type switch
+        sb.AppendLine($"Auslöser: {triggerName}");
+        sb.AppendLine($"Typ: {type switch
         {
             TriggerType.Test => "Test",
             TriggerType.Alarm => "Normal",
             TriggerType.ImmediateAlarm => "Sofort",
             _ => "Unbekannt"
         }}");
-
+        
         msg.Message = sb.ToString();
         msg.Priority = PriorityLevel.Default;
         msg.Tags = new [] {"warning"};

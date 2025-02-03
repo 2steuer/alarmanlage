@@ -81,7 +81,7 @@ sys.WithTrigger(doorFront, TriggerType.Alarm);
 sys.WithTrigger(doorTechnic, TriggerType.ImmediateAlarm);
 sys.WithTrigger(doorTools, TriggerType.ImmediateAlarm);
 
-var digStatePublisher = new DigitalInputStateReporter(mqtt, "alarmanlage-huette/inputs/state");
+var digStatePublisher = new DigitalInputStateReporter(mqtt, "alarmanlage/inputs");
 digStatePublisher.AddDigitalInput(sw1, "An", "Aus");
 digStatePublisher.AddDigitalInput(doorFront, "Offen", "Geschlossen");
 digStatePublisher.AddDigitalInput(doorTechnic, "Offen", "Geschlossen");
@@ -136,7 +136,8 @@ sys.WithTestAlarmSequence(testSequence);
 log.Info("Starting up the system...");
 
 sys.WithReporter(ntfy);
-sys.WithMqttStateReporter(mqtt, "alarmanlage-huette/state");
+sys.WithMqttControl(mqtt, "alarmanlage/ctrl");
+sys.WithMqttStateReporter(mqtt, "alarmanlage/state");
 
 await mqtt.Start();
 await sys.Start();
