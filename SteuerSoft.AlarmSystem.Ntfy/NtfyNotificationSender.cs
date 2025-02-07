@@ -13,11 +13,16 @@ public class NtfyNotificationSender : IAlarmSystemReporter
 
     private string _topic;
 
+    public bool NotifyInputsWhenOff { get; set; } = false;
+
+    private bool _systemState = false;
+
     public NtfyNotificationSender(string url, string topic, string apiToken)
     {
         _client = new Client(url);
         _user = new User(apiToken);
         _topic = topic;
+        _systemState = false;
     }
 
 
@@ -31,6 +36,7 @@ public class NtfyNotificationSender : IAlarmSystemReporter
             msg.Title = "Alarmanlage";
             msg.Message = "Alarmanlage ausgeschaltet.";
             msg.Priority = PriorityLevel.Default;
+            _systemState = false;
             break;
 
             case State.Arming:
@@ -43,6 +49,7 @@ public class NtfyNotificationSender : IAlarmSystemReporter
             msg.Title = "Alarmanlage";
             msg.Message = "Alarmanlage eingeschaltet und bereit.";
             msg.Priority = PriorityLevel.Default;
+            _systemState = true;
             break;
 
             case State.PreAlarm:
@@ -77,6 +84,11 @@ public class NtfyNotificationSender : IAlarmSystemReporter
 
     public Task NewTrigger(string name, string triggerName, TriggerType type)
     {
+        if (!NotifyInputsWhenOff && !_systemState)
+        {
+            return Task.CompletedTask;
+        }
+
         var msg = new SendingMessage();
 
         msg.Title = "Auslöser detektiert!";
